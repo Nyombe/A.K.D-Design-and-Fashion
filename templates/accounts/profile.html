@@ -3,85 +3,167 @@
 {% block title %}My Profile - Achol Fashion Store{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <div class="mb-8">
-        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Account Settings</h1>
-        <p class="text-gray-500 mt-2">Manage your personal information and preferences.</p>
-    </div>
-
-    <div class="bg-white rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 overflow-hidden">
-        <div class="flex border-b border-gray-100 overflow-x-auto">
-            <button onclick="switchTab('profile')" id="tab-btn-profile" class="tab-btn px-8 py-4 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 transition-all duration-200">Personal Info</button>
-            <button onclick="switchTab('preferences')" id="tab-btn-preferences" class="tab-btn px-8 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-all duration-200">Preferences</button>
+<div class="bg-[#eef2f7] min-h-[90vh] py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 text-center md:text-left">
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Account Settings</h1>
+            <p class="text-slate-500 mt-2 text-sm">Manage your personal information and preferences.</p>
         </div>
 
-        <div class="p-8 lg:p-10">
-            <!-- Profile Info Section -->
-            <div id="tab-profile" class="tab-content block">
-                <form method="post" enctype="multipart/form-data" class="space-y-6 max-w-2xl">
-                    {% csrf_token %}
-                    <input type="hidden" name="profile_update" value="1">
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {% for field in profile_form %}
-                        <div class="{% if field.name == 'street_address' or field.name == 'location' %}md:col-span-2{% endif %}">
-                            <label for="{{ field.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-2">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                                <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="pt-6 border-t border-gray-100">
-                        <button type="submit" class="inline-flex justify-center py-3 px-8 border border-transparent shadow-lg text-sm font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:-translate-y-0.5">
-                            Update Information
-                        </button>
-                    </div>
-                </form>
+        <!-- Neumorphic Card -->
+        <div class="bg-[#eef2f7] rounded-[2.5rem] shadow-neu border border-white/60 overflow-hidden">
+            <!-- Tabs -->
+            <div class="flex space-x-4 p-6 border-b border-slate-200/40">
+                <button onclick="switchTab('profile')" id="tab-btn-profile" class="tab-btn px-6 py-3.5 text-xs font-black uppercase tracking-wider neu-tab-active transition-all duration-200">
+                    Personal Info
+                </button>
+                <button onclick="switchTab('preferences')" id="tab-btn-preferences" class="tab-btn px-6 py-3.5 text-xs font-black uppercase tracking-wider neu-tab-inactive transition-all duration-200">
+                    Preferences
+                </button>
             </div>
 
-            <!-- Preferences Section -->
-            <div id="tab-preferences" class="tab-content hidden">
-                {% if preferences_form %}
-                <form method="post" class="space-y-6 max-w-2xl">
-                    {% csrf_token %}
-                    <input type="hidden" name="preferences_update" value="1">
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {% for field in preferences_form %}
-                        <div class="{% if field.field.widget.input_type == 'checkbox' %}flex items-center space-x-3 p-4 bg-gray-50 rounded-xl border border-gray-100{% endif %}">
-                            {% if field.field.widget.input_type == 'checkbox' %}
+            <div class="p-8 lg:p-12">
+                <!-- Profile Info Section -->
+                <div id="tab-profile" class="tab-content block">
+                    <form method="post" enctype="multipart/form-data" class="space-y-6 max-w-2xl">
+                        {% csrf_token %}
+                        <input type="hidden" name="profile_update" value="1">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for field in profile_form %}
+                            <div class="{% if field.name == 'street_address' or field.name == 'location' %}md:col-span-2{% endif %}">
+                                <label for="{{ field.id_for_label }}" class="block text-xs font-black text-slate-500 uppercase tracking-widest pl-2 mb-2">
+                                    {{ field.label }}
+                                </label>
                                 {{ field }}
-                                <label for="{{ field.id_for_label }}" class="text-sm font-bold text-gray-700">{{ field.label }}</label>
-                            {% else %}
-                                <label for="{{ field.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-2">{{ field.label }}</label>
-                                {{ field }}
-                            {% endif %}
-                            
-                            {% if field.errors %}
-                                <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
-                            {% endif %}
+                                {% if field.errors %}
+                                    <p class="mt-1.5 text-xs text-red-500 font-bold pl-2">{{ field.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
 
-                    <div class="pt-6 border-t border-gray-100">
-                        <button type="submit" class="inline-flex justify-center py-3 px-8 border border-transparent shadow-lg text-sm font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:-translate-y-0.5">
-                            Save Preferences
-                        </button>
-                    </div>
-                </form>
-                {% else %}
-                <div class="text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
-                    <p class="text-gray-500 font-medium">Preferences are not available for this account.</p>
+                        <div class="pt-8 border-t border-slate-200/40">
+                            <button type="submit" class="inline-flex justify-center items-center py-4 px-8 font-black text-sm rounded-2xl neu-btn-submit transition duration-200 active:scale-[0.98]">
+                                Update Information
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                {% endif %}
+
+                <!-- Preferences Section -->
+                <div id="tab-preferences" class="tab-content hidden">
+                    {% if preferences_form %}
+                    <form method="post" class="space-y-6 max-w-2xl">
+                        {% csrf_token %}
+                        <input type="hidden" name="preferences_update" value="1">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for field in preferences_form %}
+                            <div class="{% if field.field.widget.input_type == 'checkbox' %}flex items-center space-x-3 p-4 bg-[#eef2f7] rounded-2xl border border-white/60 shadow-neu-inset{% endif %}">
+                                {% if field.field.widget.input_type == 'checkbox' %}
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}" class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ field.label }}</label>
+                                {% else %}
+                                    <label for="{{ field.id_for_label }}" class="block text-xs font-black text-slate-500 uppercase tracking-widest pl-2 mb-2">
+                                        {{ field.label }}
+                                    </label>
+                                    {{ field }}
+                                {% endif %}
+                                
+                                {% if field.errors %}
+                                    <p class="mt-1.5 text-xs text-red-500 font-bold pl-2">{{ field.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="pt-8 border-t border-slate-200/40">
+                            <button type="submit" class="inline-flex justify-center items-center py-4 px-8 font-black text-sm rounded-2xl neu-btn-submit transition duration-200 active:scale-[0.98]">
+                                Save Preferences
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="text-center py-12 bg-[#eef2f7] rounded-3xl border border-white/40 shadow-neu-inset">
+                        <p class="text-slate-500 font-bold text-sm">Preferences are not available for this account.</p>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Neumorphic soft UI custom properties and utility classes */
+    .shadow-neu {
+        box-shadow: 16px 16px 32px #d1d9e6, -16px -16px 32px #ffffff;
+    }
+    
+    .shadow-neu-inset {
+        box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+    }
+    
+    .neu-tab-active {
+        background-color: #eef2f7 !important;
+        box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.7) !important;
+        color: #1e293b !important;
+        border-radius: 1.25rem;
+        outline: none;
+    }
+    
+    .neu-tab-inactive {
+        background-color: #eef2f7 !important;
+        box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        color: #64748b !important;
+        border-radius: 1.25rem;
+        outline: none;
+    }
+
+    form input[type="text"], 
+    form input[type="email"], 
+    form input[type="date"],
+    form select,
+    form textarea {
+        display: block;
+        width: 100%;
+        padding: 0.9rem 1.25rem;
+        background-color: #eef2f7;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: 0.875rem;
+        color: #4a5568;
+        box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    form input[type="text"]:focus, 
+    form input[type="email"]:focus, 
+    form input[type="date"]:focus,
+    form select:focus,
+    form textarea:focus {
+        box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff, 0 0 0 2px rgba(165, 180, 252, 0.25);
+    }
+    
+    .neu-btn-submit {
+        background-color: #eef2f7;
+        box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        color: #334155;
+    }
+    
+    .neu-btn-submit:hover {
+        box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #ffffff;
+    }
+    
+    .neu-btn-submit:active {
+        box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+    }
+</style>
 
 <script>
     function switchTab(tabId) {
@@ -93,10 +175,9 @@
         
         // Deactivate all buttons
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('border-indigo-600', 'text-indigo-600');
-            btn.classList.add('border-transparent', 'text-gray-500');
+            btn.className = 'tab-btn px-6 py-3.5 text-xs font-black uppercase tracking-wider neu-tab-inactive transition-all duration-200';
         });
-
+        
         // Show active content
         const activeContent = document.getElementById('tab-' + tabId);
         activeContent.classList.remove('hidden');
@@ -104,18 +185,17 @@
 
         // Activate button
         const activeBtn = document.getElementById('tab-btn-' + tabId);
-        activeBtn.classList.add('border-indigo-600', 'text-indigo-600');
-        activeBtn.classList.remove('border-transparent', 'text-gray-500');
+        activeBtn.className = 'tab-btn px-6 py-3.5 text-xs font-black uppercase tracking-wider neu-tab-active transition-all duration-200';
     }
 
     document.addEventListener("DOMContentLoaded", function() {
         // Automatically style Django fields to look crisp
-        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="date"], select, textarea');
+        const inputs = document.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
-            if (input.type !== 'checkbox') {
-                input.classList.add('appearance-none', 'block', 'w-full', 'px-4', 'py-3', 'border', 'border-gray-200', 'rounded-xl', 'shadow-sm', 'placeholder-gray-400', 'focus:outline-none', 'focus:ring-2', 'focus:ring-indigo-500', 'focus:border-transparent', 'transition', 'duration-200', 'bg-gray-50', 'hover:bg-white', 'text-sm');
-            } else {
-                input.classList.add('h-5', 'w-5', 'text-indigo-600', 'focus:ring-indigo-500', 'border-gray-300', 'rounded');
+            if (input.type !== 'checkbox' && input.type !== 'radio' && input.type !== 'hidden') {
+                input.className = ''; // Remove all boostrap classes
+            } else if (input.type === 'checkbox') {
+                input.className = 'h-4 w-4 text-slate-700 focus:ring-slate-900 border-slate-300 rounded cursor-pointer';
             }
         });
     });

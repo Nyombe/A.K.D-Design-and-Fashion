@@ -3,25 +3,25 @@
 {% block title %}Login | Achol Fashion Store{% endblock %}
 
 {% block content %}
-<div class="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-white">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="text-center">
-            <h2 class="mt-6 text-4xl font-extrabold text-slate-900 tracking-tight">
-                Welcome back
-            </h2>
-            <p class="mt-2 text-sm text-slate-600">
-                Sign in to your Achol account to continue
-            </p>
-        </div>
-    </div>
+<div class="min-h-[85vh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#eef2f7]">
+    <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Neumorphic Card -->
+        <div class="bg-[#eef2f7] py-10 px-8 rounded-[2.5rem] shadow-neu border border-white/60">
+            <!-- Tabs -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <a href="{% url 'auth:login' %}" class="w-full text-center py-3.5 px-4 font-bold text-sm text-slate-800 rounded-2xl neu-tab-active">
+                    Login
+                </a>
+                <a href="{% url 'auth:register' %}" class="w-full text-center py-3.5 px-4 font-bold text-sm text-slate-500 rounded-2xl neu-tab-inactive">
+                    Register
+                </a>
+            </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow-2xl sm:rounded-3xl sm:px-10 border border-slate-100 ring-1 ring-slate-900/5">
             <form class="space-y-6" method="POST">
                 {% csrf_token %}
                 
                 {% if form.non_field_errors %}
-                <div class="rounded-md bg-red-50 p-4 border-l-4 border-red-400">
+                <div class="rounded-2xl bg-red-50 p-4 border border-red-200 shadow-sm">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -29,7 +29,7 @@
                             </svg>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm text-red-700">{{ form.non_field_errors.0 }}</p>
+                            <p class="text-sm text-red-700 font-medium">{{ form.non_field_errors.0 }}</p>
                         </div>
                     </div>
                 </div>
@@ -37,86 +37,144 @@
 
                 {% for field in form %}
                 <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-slate-700">
+                    <label for="{{ field.id_for_label }}" class="block text-xs font-black text-slate-500 uppercase tracking-widest pl-2 mb-2">
                         {{ field.label }}
                     </label>
-                    <div class="mt-1 relative group">
+                    <div class="relative group">
                         {{ field }}
                         {% if field.errors %}
-                        <p class="mt-1 text-xs text-red-600 font-medium">{{ field.errors.0 }}</p>
+                        <p class="mt-1.5 text-xs text-red-500 font-bold pl-2">{{ field.errors.0 }}</p>
                         {% endif %}
                     </div>
                 </div>
                 {% endfor %}
 
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between px-2">
                     <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-slate-900 focus:ring-slate-900 border-slate-300 rounded cursor-pointer">
-                        <label for="remember-me" class="ml-2 block text-sm text-slate-700 cursor-pointer">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-slate-700 focus:ring-slate-900 border-slate-300 rounded cursor-pointer">
+                        <label for="remember-me" class="ml-2 block text-xs font-bold text-slate-500 cursor-pointer">
                             Remember me
                         </label>
                     </div>
 
-                    <div class="text-sm">
-                        <a href="{% url 'auth:password_reset' %}" class="font-medium text-slate-600 hover:text-slate-900 transition-colors duration-200">
+                    <div class="text-xs">
+                        <a href="{% url 'auth:password_reset' %}" class="font-bold text-slate-500 hover:text-slate-800 transition-colors duration-200">
                             Forgot password?
                         </a>
                     </div>
                 </div>
 
-                <div>
-                    <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 transition-all duration-300 transform active:scale-[0.98]">
-                        Sign in
+                <div class="pt-4">
+                    <button type="submit" class="w-full flex justify-center items-center py-4 px-4 font-black text-sm text-slate-700 rounded-2xl neu-btn-submit transition duration-200 active:scale-[0.98]">
+                        <span class="mr-2">➜</span> Login
                     </button>
                 </div>
             </form>
 
-            <div class="mt-6">
-                <div class="relative">
+            <!-- Social Logins -->
+            <div class="mt-8">
+                <div class="relative mb-6">
                     <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-slate-200"></div>
+                        <div class="w-full border-t border-slate-200/50"></div>
                     </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-3 bg-white text-slate-500 font-medium italic">or join the collection</span>
+                    <div class="relative flex justify-center text-xs">
+                        <span class="px-3 bg-[#eef2f7] text-slate-400 font-black uppercase tracking-widest text-[0.65rem]">Or continue with</span>
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <a href="{% url 'auth:register' %}" class="w-full flex justify-center py-3 px-4 border-2 border-slate-900 rounded-xl text-sm font-bold text-slate-900 bg-white hover:bg-slate-50 transition-all duration-300 transform active:scale-[0.98]">
-                        Create new account
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="neu-social-btn">
+                        <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.7 0 3.25.61 4.47 1.62l2.457-2.458C17.385 1.5 15.01 0 12.24 0c-6.075 0-11 4.925-11 11s4.925 11 11 11c6.345 0 10.56-4.46 10.56-10.74 0-.72-.06-1.41-.18-2.095H12.24z"/></svg>
+                    </a>
+                    <a href="#" class="neu-social-btn">
+                        <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="#" class="neu-social-btn">
+                        <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
                     </a>
                 </div>
             </div>
         </div>
         
-        <p class="mt-8 text-center text-xs text-slate-500 uppercase tracking-widest font-semibold">
-            &copy; {% now "Y" %} Achol Fashion Store
+        <p class="mt-8 text-center text-xs text-slate-400 uppercase tracking-widest font-black">
+            &copy; {% now "Y" %} A.K.D Fashion and Design
         </p>
     </div>
 </div>
 
 <style>
-    /* Styling Django input fields specifically for this professional look */
+    /* Neumorphic soft UI custom properties and utility classes */
+    .shadow-neu {
+        box-shadow: 16px 16px 32px #d1d9e6, -16px -16px 32px #ffffff;
+    }
+    
+    .neu-tab-active {
+        background-color: #eef2f7;
+        box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    
+    .neu-tab-inactive {
+        background-color: #eef2f7;
+        box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
     form input[type="text"], 
     form input[type="password"], 
     form input[type="email"] {
         display: block;
         width: 100%;
-        padding: 0.75rem 1rem;
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.75rem;
+        padding: 0.9rem 1.25rem;
+        background-color: #eef2f7;
+        border: none;
+        border-radius: 1.5rem;
         font-size: 0.875rem;
-        transition: all 0.2s;
-        color: #0f172a;
+        color: #4a5568;
+        box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+        transition: all 0.3s ease;
+        outline: none;
     }
+    
     form input[type="text"]:focus, 
     form input[type="password"]:focus, 
     form input[type="email"]:focus {
-        background-color: #fff;
-        border-color: #0f172a;
-        box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
-        outline: none;
+        box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff, 0 0 0 2px rgba(165, 180, 252, 0.25);
+    }
+    
+    .neu-btn-submit {
+        background-color: #eef2f7;
+        box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    
+    .neu-btn-submit:hover {
+        box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #ffffff;
+    }
+    
+    .neu-btn-submit:active {
+        box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+    }
+    
+    .neu-social-btn {
+        width: 3.5rem;
+        height: 3.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eef2f7;
+        border-radius: 1.25rem;
+        box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+    }
+    
+    .neu-social-btn:hover {
+        box-shadow: 2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff;
+    }
+    
+    .neu-social-btn:active {
+        box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
     }
 </style>
 {% endblock %}
