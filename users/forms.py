@@ -95,3 +95,38 @@ class UserPreferencesForm(forms.ModelForm):
             'show_profile': forms.CheckboxInput(),
             'allow_data_collection': forms.CheckboxInput(),
         }
+
+
+class VendorCreationForm(CustomUserCreationForm):
+    """Form for vendor registration and profile setup."""
+    
+    shop_name = forms.CharField(max_length=150, required=True, label="Business/Shop Name")
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=False, label="Shop Description")
+
+    class Meta(CustomUserCreationForm.Meta):
+        fields = CustomUserCreationForm.Meta.fields + ('shop_name', 'description')
+
+    def clean_shop_name(self):
+        shop_name = self.cleaned_data.get('shop_name')
+        from .models import Vendor
+        if Vendor.objects.filter(shop_name__iexact=shop_name).exists():
+            raise forms.ValidationError('A shop with this name already exists.')
+        return shop_name
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = 'vendor'
+        user.is_active = True
+        if commit:
+            user.save()
+            from django.utils.text import slugify
+            from .models import Vendor
+            slug = slugify(self.cleaned_data.get('shop_name'))
+            Vendor.objects.create(
+                owner=user,
+                shop_name=self.cleaned_data.get('shop_name'),
+                slug=slug,
+                description=self.cleaned_data.get('description'),
+                is_active=False
+            )
+        return user

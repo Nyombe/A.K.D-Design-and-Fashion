@@ -20,6 +20,11 @@
                 <button onclick="switchTab('preferences')" id="tab-btn-preferences" class="tab-btn px-6 py-3.5 text-xs font-black uppercase tracking-wider neu-tab-inactive transition-all duration-200">
                     Preferences
                 </button>
+                {% if user.role == 'vendor' and vendor %}
+                <button onclick="switchTab('merchant')" id="tab-btn-merchant" class="tab-btn px-6 py-3.5 text-xs font-black uppercase tracking-wider neu-tab-inactive transition-all duration-200">
+                    🏪 Merchant Dashboard
+                </button>
+                {% endif %}
             </div>
 
             <div class="p-8 lg:p-12">
@@ -90,6 +95,65 @@
                     </div>
                     {% endif %}
                 </div>
+
+                {% if user.role == 'vendor' and vendor %}
+                <!-- Merchant Dashboard Section -->
+                <div id="tab-merchant" class="tab-content hidden">
+                    <div class="space-y-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 bg-[#eef2f7] rounded-3xl border border-white/60 shadow-neu-inset">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-2xl shadow-md">
+                                    🏪
+                                </div>
+                                <div>
+                                    <h3 class="font-black text-slate-800 text-lg">{{ vendor.shop_name }}</h3>
+                                    <p class="text-[0.65rem] text-slate-400 font-bold uppercase tracking-wider">Store Slug: {{ vendor.slug }}</p>
+                                </div>
+                            </div>
+                            <div>
+                                {% if vendor.is_active %}
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-sm">Active & Verified</span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200 shadow-sm">Pending Verification</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Statistics Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="p-6 bg-[#eef2f7] rounded-3xl border border-white/60 shadow-neu flex flex-col items-center text-center">
+                                <span class="text-2xl mb-1">🏷️</span>
+                                <h4 class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest">Active Products</h4>
+                                <p class="text-3xl font-black text-slate-800 mt-2">{{ vendor_products_count }}</p>
+                            </div>
+                            <div class="p-6 bg-[#eef2f7] rounded-3xl border border-white/60 shadow-neu flex flex-col items-center text-center">
+                                <span class="text-2xl mb-1">💰</span>
+                                <h4 class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest">Commission Split</h4>
+                                <p class="text-3xl font-black text-slate-800 mt-2">{{ vendor.commission_percentage }}%</p>
+                            </div>
+                            <div class="p-6 bg-[#eef2f7] rounded-3xl border border-white/60 shadow-neu flex flex-col items-center text-center">
+                                <span class="text-2xl mb-1">💳</span>
+                                <h4 class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest">Stripe Connect</h4>
+                                {% if vendor.stripe_connect_id %}
+                                    <p class="text-[0.65rem] font-black text-emerald-600 uppercase tracking-widest mt-4">Linked Successfully</p>
+                                {% else %}
+                                    <span class="inline-block mt-3 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-xl text-xs font-black border border-indigo-200">Connect Stripe</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Business Controls -->
+                        <div class="p-8 bg-[#eef2f7] rounded-[2rem] border border-white/60 shadow-neu">
+                            <h3 class="font-black text-slate-800 text-base mb-4 uppercase tracking-wider">Merchant Controls</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-6 leading-relaxed">As an approved merchant on the A.K.D platform, you can manage inventory, process payouts, and track sub-order logistics directly. Your storefront is currently accessible by administrators.</p>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="/admin/products/product/add/" class="px-5 py-3.5 bg-slate-800 text-white font-black text-xs rounded-xl shadow-md hover:bg-slate-900 transition duration-200">➕ Add Product</a>
+                                <a href="/admin/products/product/?vendor__id__exact={{ vendor.id }}" class="px-5 py-3.5 bg-white border border-slate-200 text-slate-700 font-black text-xs rounded-xl shadow-md hover:bg-slate-50 transition duration-200">📦 View Inventory</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

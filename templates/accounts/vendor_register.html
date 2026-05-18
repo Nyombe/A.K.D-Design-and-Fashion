@@ -1,0 +1,132 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Merchant Onboarding - A.K.D Fashion and Design{% endblock %}
+
+{% block content %}
+<div class="min-h-[85vh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#eef2f7]">
+    <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-xl">
+        <!-- Neumorphic Card -->
+        <div class="bg-[#eef2f7] py-10 px-8 sm:px-12 rounded-[2.5rem] shadow-neu border border-white/60">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <span class="text-[0.65rem] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50/50 px-3 py-1.5 rounded-full shadow-inner border border-white/50">Merchant Partner Portal</span>
+                <h2 class="mt-4 text-3xl font-black text-slate-800 tracking-tight leading-tight">Scale Your Business</h2>
+                <p class="mt-2 text-xs text-slate-400 font-bold uppercase tracking-wider max-w-sm mx-auto">Build your premium storefront, manage stock, and sell under A.K.D</p>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="rounded-2xl bg-red-50 p-4 border border-red-200 shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700 font-medium">{{ form.non_field_errors.0 }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {% for field in form %}
+                        <!-- Special layout handling: full-width description and shop name -->
+                        <div class="{% if field.name == 'shop_name' or field.name == 'description' or field.name == 'email' or field.name == 'password1' or field.name == 'password2' %}sm:col-span-2{% endif %}">
+                            <label for="{{ field.id_for_label }}" class="block text-[0.65rem] font-black text-slate-500 uppercase tracking-widest pl-2 mb-2">
+                                {{ field.label }}
+                            </label>
+                            <div class="relative group">
+                                {{ field }}
+                                {% if field.errors %}
+                                <p class="mt-1.5 text-xs text-red-500 font-bold pl-2">{{ field.errors.0 }}</p>
+                                {% endif %}
+                                {% if field.help_text %}
+                                <p class="mt-1.5 text-[0.65rem] text-slate-400 font-medium pl-2 leading-relaxed">{{ field.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" class="w-full flex justify-center items-center py-4.5 px-4 font-black text-sm text-slate-700 rounded-2xl neu-btn-submit transition duration-200 active:scale-[0.98] cursor-pointer">
+                        <span class="mr-2">🏪</span> Apply for Merchant Storefront
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 text-center">
+                <p class="text-xs text-slate-400 font-bold tracking-wider">
+                    Already have a merchant account? 
+                    <a href="{% url 'auth:login' %}" class="text-indigo-600 hover:text-indigo-700 font-black ml-1">Login here</a>
+                </p>
+            </div>
+        </div>
+        
+        <p class="mt-8 text-center text-xs text-slate-400 uppercase tracking-widest font-black">
+            &copy; {% now "Y" %} A.K.D Fashion and Design
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Neumorphic soft UI custom properties and utility classes */
+    .shadow-neu {
+        box-shadow: 16px 16px 32px #d1d9e6, -16px -16px 32px #ffffff;
+    }
+
+    form input[type="text"], 
+    form input[type="password"], 
+    form input[type="email"],
+    form textarea {
+        display: block;
+        width: 100%;
+        padding: 0.9rem 1.25rem;
+        background-color: #eef2f7;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: 0.875rem;
+        color: #4a5568;
+        box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    form input[type="text"]:focus, 
+    form input[type="password"]:focus, 
+    form input[type="email"]:focus,
+    form textarea:focus {
+        box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff, 0 0 0 2px rgba(165, 180, 252, 0.25);
+    }
+    
+    .neu-btn-submit {
+        background-color: #eef2f7;
+        box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    
+    .neu-btn-submit:hover {
+        box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #ffffff;
+    }
+    
+    .neu-btn-submit:active {
+        box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Automatically style Django fields to look crisp
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            if (input.type !== 'checkbox' && input.type !== 'radio' && input.type !== 'hidden') {
+                input.className = '';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -11,6 +11,13 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     
+    ROLE_CHOICES = (
+        ('customer', 'Customer'),
+        ('vendor', 'Vendor/Business'),
+        ('admin', 'Platform Admin'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
+    
     # Address fields
     street_address = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=100, blank=True, verbose_name="City Area/Neighborhood")
@@ -94,3 +101,28 @@ class UserPreferences(TimeStampedModel):
 
     def __str__(self):
         return f"Preferences for {self.user.email}"
+
+
+class Vendor(TimeStampedModel):
+    """Profile model for third-party businesses selling on A.K.D."""
+    
+    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='vendor_profile')
+    shop_name = models.CharField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    description = models.TextField(blank=True)
+    logo = models.ImageField(upload_to='vendor_logos/', blank=True)
+    banner = models.ImageField(upload_to='vendor_banners/', blank=True)
+    
+    # Verification & Status
+    is_active = models.BooleanField(default=False)  # Requires platform admin verification to sell
+    commission_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=10.00)  # Platform commission fee
+    
+    # Financial Connect (Stripe Payouts)
+    stripe_connect_id = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = 'Vendor Profile'
+        verbose_name_plural = 'Vendor Profiles'
+
+    def __str__(self):
+        return f"{self.shop_name} (Owned by {self.owner.email})"

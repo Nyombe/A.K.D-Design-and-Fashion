@@ -182,6 +182,17 @@ class OrderItem(BaseModel):
     
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='order_items')
+    vendor = models.ForeignKey('users.Vendor', on_delete=models.SET_NULL, null=True, blank=True, related_name='order_items')
+    fulfillment_status = models.CharField(
+        max_length=20, 
+        choices=[
+            ('pending', 'Pending'),
+            ('shipped', 'Shipped'),
+            ('delivered', 'Delivered'),
+            ('cancelled', 'Cancelled')
+        ], 
+        default='pending'
+    )
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])

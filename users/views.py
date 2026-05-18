@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.throttling import ScopedRateThrottle
 
 from .models import CustomUser, UserPreferences
-from .forms import CustomUserCreationForm, CustomUserChangeForm, UserPreferencesForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm, UserPreferencesForm, VendorCreationForm
 from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, UserPreferencesSerializer
 
 
@@ -140,6 +140,13 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
         context['preferences'] = getattr(user, 'preferences', None)
         context['profile_form'] = CustomUserChangeForm(instance=user)
         context['preferences_form'] = UserPreferencesForm(instance=user.preferences) if hasattr(user, 'preferences') else None
+        
+        # Inject Vendor specific dashboard statistics
+        if user.role == 'vendor' and hasattr(user, 'vendor_profile'):
+            vendor = user.vendor_profile
+            context['vendor'] = vendor
+            context['vendor_products_count'] = vendor.products.count()
+            
         return context
 
     def post(self, request, *args, **kwargs):
@@ -160,3 +167,21 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
                     return redirect('auth:profile')
         
         return self.get(request, *args, **kwargs)
+
+
+class VendorRegisterWebView(CreateView):
+    """Web view for vendor registration."""
+    
+    model = CustomUser
+    form_class = VendorCreationForm
+    template_name = 'accounts/vendor_register.html'
+    success_url = reverse_lazy('auth:login')
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('core:home')
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        return super().form_valid(form)
