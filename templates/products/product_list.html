@@ -48,12 +48,18 @@
                     {% endwith %}
                 </a>
                 
-                <!-- Sale Badge -->
-                {% if product.discount_price %}
-                <div class="absolute top-4 left-4 z-20">
-                    <span class="bg-red-500 text-white text-[0.65rem] font-black px-2.5 py-1 rounded-lg shadow-lg uppercase tracking-wider">Love</span>
-                </div>
-                {% endif %}
+                <!-- Like/Heart Button -->
+                <button type="button" 
+                        onclick="toggleProductLike(event, '{{ product.slug }}')"
+                        class="absolute top-4 left-4 z-30 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-md border border-white/50 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group/heart"
+                        id="like-btn-{{ product.slug }}"
+                        data-product-slug="{{ product.slug }}"
+                        aria-label="Like product">
+                    <svg class="w-5 h-5 text-red-500 transition-all duration-300 ease-in-out heart-icon fill-transparent stroke-current stroke-2" 
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </button>
             </div>
 
             <!-- Product Content -->

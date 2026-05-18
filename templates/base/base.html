@@ -354,6 +354,91 @@
         });
     </script>
     
+    <!-- Liked/Love Toggle Global Logic -->
+    <script>
+        // Function to get liked products list from localStorage
+        function getLikedProducts() {
+            const liked = localStorage.getItem('akd_liked_products');
+            return liked ? JSON.parse(liked) : [];
+        }
+
+        // Function to set liked products list to localStorage
+        function setLikedProducts(likedList) {
+            localStorage.setItem('akd_liked_products', JSON.stringify(likedList));
+        }
+
+        // Core function to toggle like
+        function toggleProductLike(event, slug) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            let liked = getLikedProducts();
+            const index = liked.indexOf(slug);
+            let isLikedNow = false;
+
+            if (index > -1) {
+                liked.splice(index, 1);
+            } else {
+                liked.push(slug);
+                isLikedNow = true;
+            }
+
+            setLikedProducts(liked);
+            updateHeartUI(slug, isLikedNow);
+            
+            // Sync all matching hearts on the page
+            updateAllHeartsOnPage();
+        }
+
+        // Function to update the heart icon SVG fill
+        function updateHeartUI(slug, isLiked) {
+            const buttons = document.querySelectorAll(`[id="like-btn-${slug}"]`);
+            buttons.forEach(btn => {
+                const svgPath = btn.querySelector('.heart-icon');
+                if (svgPath) {
+                    if (isLiked) {
+                        svgPath.classList.remove('fill-transparent');
+                        svgPath.classList.add('fill-red-500');
+                        // Add a quick pulse animation
+                        btn.classList.add('scale-125');
+                        setTimeout(() => {
+                            btn.classList.remove('scale-125');
+                        }, 200);
+                    } else {
+                        svgPath.classList.remove('fill-red-500');
+                        svgPath.classList.add('fill-transparent');
+                    }
+                }
+            });
+        }
+
+        // Function to sync liked state with localStorage on page load
+        function updateAllHeartsOnPage() {
+            const liked = getLikedProducts();
+            const likeButtons = document.querySelectorAll('[id^="like-btn-"]');
+            likeButtons.forEach(btn => {
+                const slug = btn.getAttribute('data-product-slug') || btn.id.replace('like-btn-', '');
+                const isLiked = liked.includes(slug);
+                const svgPath = btn.querySelector('.heart-icon');
+                if (svgPath) {
+                    if (isLiked) {
+                        svgPath.classList.remove('fill-transparent');
+                        svgPath.classList.add('fill-red-500');
+                    } else {
+                        svgPath.classList.remove('fill-red-500');
+                        svgPath.classList.add('fill-transparent');
+                    }
+                }
+            });
+        }
+
+        // Sync state immediately on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAllHeartsOnPage();
+        });
+    </script>
     <!-- Floating WhatsApp Button -->
     <a href="https://wa.me/211929869511" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-[#25D366] text-white rounded-full p-4 shadow-lg hover:bg-[#128C7E] transition-all transform hover:scale-110 z-50 flex items-center justify-center">
         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.213.578 4.372 1.674 6.276L.003 24l5.856-1.536A11.96 11.96 0 0012.031 24c6.646 0 12.031-5.385 12.031-12.031S18.677 0 12.031 0zm6.549 17.151c-.279.789-1.625 1.492-2.234 1.543-.611.05-1.391-.018-4.258-1.205-3.447-1.428-5.711-5.011-5.885-5.244-.175-.233-1.408-1.875-1.408-3.576 0-1.701.884-2.54 1.198-2.889.314-.349.687-.436.916-.436.23 0 .46.002.665.012.213.01.496-.08.775.592.288.694.981 2.392 1.068 2.566.087.175.145.378.029.611-.116.233-.175.378-.349.576-.175.198-.364.426-.525.592-.175.175-.361.368-.158.718.203.349.905 1.496 1.944 2.422 1.341 1.196 2.457 1.564 2.806 1.739.349.175.553.146.757-.087.203-.233.873-1.018 1.106-1.367.233-.349.467-.291.785-.175.32.116 2.008.946 2.356 1.12.349.175.582.262.669.407.087.146.087.844-.192 1.633z" /></svg>
