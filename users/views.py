@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.throttling import ScopedRateThrottle
 
 from .models import CustomUser, UserPreferences
 from .forms import CustomUserCreationForm, CustomUserChangeForm, UserPreferencesForm
@@ -21,6 +22,8 @@ class RegisterView(APIView):
     """API view for user registration."""
     
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
     
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -40,6 +43,8 @@ class LoginView(APIView):
     """API view for user login."""
     
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
     
     def post(self, request):
         serializer = LoginSerializer(data=request.data)

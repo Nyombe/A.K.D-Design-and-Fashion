@@ -7,11 +7,11 @@ import dj_database_url
 
 DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com,achol-fashion-store.onrender.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com,akd-fashion-design.onrender.com', cast=Csv())
 
 # Add CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = [
-    'https://achol-fashion-store.onrender.com',
+    'https://akd-fashion-design.onrender.com',
     'https://*.onrender.com',
 ]
 
@@ -29,6 +29,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
 
 # Static files - Simplified WhiteNoise for stability
 STATIC_URL = '/static/'
@@ -56,5 +57,5 @@ CACHES = {
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "https://achol-fashion-store.onrender.com",
+    "https://akd-fashion-design.onrender.com",
 ]

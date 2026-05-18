@@ -158,14 +158,29 @@ class StripePaymentGateway(PaymentGatewayBase):
         Returns:
             dict: Webhook event data if valid, None otherwise
         """
+        webhook_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', None)
+        
+        if not webhook_secret:
+            import logging
+            logger = logging.getLogger('django.security')
+            logger.error("STRIPE_WEBHOOK_SECRET is not configured. Webhook verification skipped but rejected.")
+            return None
+
         try:
             event = stripe.Webhook.construct_event(
                 payload,
                 signature,
-                settings.STRIPE_WEBHOOK_SECRET
+                webhook_secret
             )
             return event
-        except (ValueError, stripe.error.SignatureVerificationError):
+        except ValueError as e:
+            # Invalid payload
+            return None
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            import logging
+            logger = logging.getLogger('django.security')
+            logger.warning(f"Invalid Stripe webhook signature detected: {e}")
             return None
 
 

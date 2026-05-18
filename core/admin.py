@@ -4,9 +4,9 @@ Core app admin configuration.
 from django.contrib import admin
 
 # Customize the default admin site
-admin.site.site_header = "Achol Fashion Store Management"
-admin.site.site_title = "Achol Management"
-admin.site.index_title = "Welcome to the Achol Admin Portal"
+admin.site.site_header = "A.K.D FASHION AND DESIGN Management"
+admin.site.site_title = "A.K.D Management"
+admin.site.index_title = "Welcome to the A.K.D Admin Portal"
 
 # Dashboard overview counts
 _original_index = admin.site.index

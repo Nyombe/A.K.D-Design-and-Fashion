@@ -10,7 +10,7 @@ django-jazzmin==3.0.0
 
 # Deployment Dependencies
 gunicorn==21.2.0
-psycopg2-binary==2.9.9
+# psycopg2-binary==2.9.9
 dj-database-url==2.1.0
 whitenoise==6.5.0
 cloudinary==1.36.0

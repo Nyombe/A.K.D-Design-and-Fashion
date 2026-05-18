@@ -9,7 +9,11 @@ class Command(BaseCommand):
         User = get_user_model()
         username = os.environ.get('ADMIN_USERNAME', 'admin')
         email = os.environ.get('ADMIN_EMAIL', 'acholkuoldeng55@gmail.com')
-        password = os.environ.get('ADMIN_PASSWORD', 'AcholAdmin2026!')
+        password = os.environ.get('ADMIN_PASSWORD')
+        
+        if not password:
+            self.stdout.write(self.style.ERROR('ADMIN_PASSWORD environment variable is not set.'))
+            return
 
         if not User.objects.filter(username=username).exists():
             User.objects.create_superuser(username=username, email=email, password=password)

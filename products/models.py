@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, FileExtensionValidator
 from django.utils.text import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -193,7 +193,13 @@ class ProductImage(BaseModel):
     """Product image model for multiple images per product."""
     
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='products/', blank=True, null=True, max_length=255)
+    image = models.ImageField(
+        upload_to='products/', 
+        blank=True, 
+        null=True, 
+        max_length=255,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'gif'])]
+    )
     image_url = models.URLField(max_length=500, blank=True, help_text='Optional: Use if not uploading an image file.')
     alt_text = models.CharField(max_length=255, blank=True)
     is_primary = models.BooleanField(default=False)
@@ -204,9 +210,16 @@ class ProductImage(BaseModel):
         # Ensure either image or image_url is provided
         if not self.image and not self.image_url:
             raise ValidationError('Either an image file or image URL must be provided.')
-        # Limit image file size (e.g., 2MB)
-        if self.image and self.image.size > 2 * 1024 * 1024:
-            raise ValidationError('Image file too large (max 2MB).')
+        # Limit image file size (e.g., 5MB)
+        if self.image:
+            if self.image.size > 5 * 1024 * 1024:
+                raise ValidationError('Image file too large (max 5MB).')
+            
+            # Basic MIME type check using extension if magic not available
+            # For a more robust check, you'd use 'python-magic' or similar
+            ext = self.image.name.split('.')[-1].lower()
+            if ext not in ['jpg', 'jpeg', 'png', 'webp', 'gif']:
+                raise ValidationError(f'Unsupported file extension: {ext}')
 
     class Meta:
         verbose_name = 'Product Image'

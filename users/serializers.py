@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from .models import CustomUser, UserPreferences
 
 
@@ -39,6 +41,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({'password': 'Passwords do not match.'})
+        
+        # Validate password strength using Django validators (including our custom one)
+        try:
+            validate_password(attrs['password'])
+        except ValidationError as e:
+            raise serializers.ValidationError({'password': list(e.messages)})
         
         if CustomUser.objects.filter(email=attrs['email']).exists():
             raise serializers.ValidationError({'email': 'Email already in use.'})

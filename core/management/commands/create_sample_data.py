@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from products.models import Category, Product, ProductImage
 from decimal import Decimal
 import os
+import secrets
+import string
 
 User = get_user_model()
 
@@ -15,14 +17,19 @@ class Command(BaseCommand):
 
         # Create superuser
         if not User.objects.filter(email='admin@ecommerce.com').exists():
+            # Generate a random secure password
+            alphabet = string.ascii_letters + string.digits + string.punctuation
+            random_password = ''.join(secrets.choice(alphabet) for i in range(16))
+            
             User.objects.create_superuser(
                 username='admin',
                 email='admin@ecommerce.com',
-                password='admin123',
+                password=random_password,
                 first_name='Admin',
                 last_name='User'
             )
             self.stdout.write(self.style.SUCCESS('✓ Superuser created'))
+            self.stdout.write(self.style.WARNING(f'  - Password generated: {random_password}'))
 
         # Create categories
         categories = [
@@ -115,6 +122,4 @@ class Command(BaseCommand):
                 self.stdout.write(f'✓ Created product: {product.name}')
 
         self.stdout.write(self.style.SUCCESS('\n✓ Sample data creation completed!'))
-        self.stdout.write(self.style.WARNING('\nDevelopment User:'))
-        self.stdout.write(f'Email: admin@ecommerce.com')
-        self.stdout.write(f'Password: admin123')
+        self.stdout.write(self.style.WARNING('\nNote: Passwords for newly created users are generated randomly.'))

@@ -8,7 +8,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-debug-key-change-this
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'products.context_processors.categories_processor',
             ],
         },
     },
@@ -80,9 +81,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {'NAME': 'core.validators.ComplexityValidator'},
 ]
 
 LANGUAGE_CODE = 'en-us'
@@ -118,6 +120,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+        'auth': '5/minute',  # Stricter for auth
+    }
 }
 
 # ==============================================================================
@@ -145,6 +156,15 @@ X_FRAME_OPTIONS = 'DENY'
 
 # XSS Protection
 SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# HSTS (Enable in production)
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Referrer Policy
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # Content Security Policy (Basic default)
 SECURE_CONTENT_SECURITY_POLICY = {
@@ -188,11 +208,18 @@ LOGGING = {
             'style': '{',
         },
     },
+    'filters': {
+        'sensitive_data': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: not any(x in str(record.msg) for x in ['password', 'token', 'secret', 'key']),
+        }
+    },
     'handlers': {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
+            'filters': ['sensitive_data'],
         },
     },
     'loggers': {
@@ -264,13 +291,13 @@ CELERY_TASK_SERIALIZER = 'json'
 # ==============================================================================
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Achol Admin",
-    "site_header": "Achol Fashion Store",
-    "site_brand": "ACHOL MANAGEMENT",
-    "welcome_sign": "Welcome to the Achol Management Portal",
+    "site_title": "A.K.D Admin",
+    "site_header": "A.K.D FASHION AND DESIGN",
+    "site_brand": "A.K.D MANAGEMENT",
+    "welcome_sign": "Welcome to the A.K.D Management Portal",
     "site_logo": "img/admin-logo.svg",
     "site_logo_classes": "brand-image elevation-3",
-    "copyright": "Achol Fashion Store Ltd",
+    "copyright": "A.K.D FASHION AND DESIGN Ltd",
     "search_model": ["users.CustomUser", "products.Product", "orders.Order", "payments.Payment"],
     "dashboard_view": "admin:index",
     "topmenu_links": [
