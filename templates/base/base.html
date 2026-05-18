@@ -300,8 +300,7 @@
             if (mobileMenuButton && mobileMenu) {
                 // Function to toggle menu
                 const toggleMenu = (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+                    event.stopPropagation(); // Stop event from propagating to document click handler
                     
                     const isHidden = mobileMenu.classList.contains('hidden');
                     
@@ -324,9 +323,8 @@
                     }
                 };
                 
-                // Add event listeners for both mouse and touch
+                // Add event listener for tap/click
                 mobileMenuButton.addEventListener('click', toggleMenu);
-                mobileMenuButton.addEventListener('touchstart', toggleMenu, { passive: false });
                 
                 // Close menu when clicking outside
                 document.addEventListener('click', (event) => {
