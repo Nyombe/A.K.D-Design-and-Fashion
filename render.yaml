@@ -13,7 +13,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS
-        value: "akd-fashion-design.onrender.com,akd.com,www.akd.com" # Specific Render service hostname
+        value: "achol-fashion-store.onrender.com,akd-fashion-design.onrender.com,akd.com,www.akd.com" # Specific Render service hostname
       - key: DATABASE_URL
         sync: false # Requires Neon Postgres string
       - key: CLOUDINARY_CLOUD_NAME
