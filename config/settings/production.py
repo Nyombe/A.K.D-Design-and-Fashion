@@ -7,11 +7,13 @@ import dj_database_url
 
 DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com,akd-fashion-design.onrender.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com,akd-fashion-design.onrender.com,akd.com,www.akd.com', cast=Csv())
 
 # Add CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = [
     'https://akd-fashion-design.onrender.com',
+    'https://akd.com',
+    'https://www.akd.com',
     'https://*.onrender.com',
 ]
 
