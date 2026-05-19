@@ -13,25 +13,20 @@ from django_otp.admin import OTPAdminSite, OTPAdminAuthenticationForm
 from django_otp import devices_for_user
 
 class FlexOTPAuthenticationForm(OTPAdminAuthenticationForm):
-    def clean(self):
-        username = self.cleaned_data.get('username')
-        password = self.cleaned_data.get('password')
-        
-        from django.contrib.auth import authenticate
-        user = authenticate(username=username, password=password)
-        
-        if user is not None and user.is_active:
-            has_confirmed_device = False
-            for device in devices_for_user(user):
-                if device.confirmed:
-                    has_confirmed_device = True
-                    break
+    def clean_otp(self, user):
+        if user is None:
+            return
             
-            if not has_confirmed_device:
-                from django.contrib.admin.forms import AdminAuthenticationForm
-                return AdminAuthenticationForm.clean(self)
+        has_confirmed_device = False
+        for device in devices_for_user(user):
+            if device.confirmed:
+                has_confirmed_device = True
+                break
                 
-        return super().clean()
+        if not has_confirmed_device:
+            return
+            
+        return super().clean_otp(user)
 
 class FlexOTPAdminSite(OTPAdminSite):
     login_form = FlexOTPAuthenticationForm
