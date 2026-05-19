@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="{% block meta_description %}A.K.D Fashion and Design: Trendy clothing, stylish footwear, and everyday essentials. Discover quality dresses, sneakers, and accessories with fast, secure delivery.{% endblock %}">
+    <meta name="description" content="{% block meta_description %}A.K.D Fashion and Design: Trendy clothing, stylish footwear, and everyday essentials. Discover quality dresses, sneakers, and accessories online.{% endblock %}">
     <meta name="keywords" content="{% block meta_keywords %}fashion, clothing, footwear, accessories, online shopping, sneakers, dresses, A.K.D Fashion and Design{% endblock %}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:title" content="{% block og_title %}A.K.D Fashion and Design | Premium E-Commerce{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Discover style, quality, and convenience with A.K.D Fashion and Design, your destination for trendy clothing, stylish footwear, and everyday essentials.{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Discover style, quality, and convenience with A.K.D Fashion and Design, your destination for trendy clothing, stylish footwear, and more.{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.jpg' %}{% endblock %}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
     <meta property="twitter:title" content="{% block twitter_title %}A.K.D Fashion and Design | Premium E-Commerce{% endblock %}">
-    <meta property="twitter:description" content="{% block twitter_description %}Discover style, quality, and convenience with A.K.D Fashion and Design, your destination for trendy clothing, stylish footwear, and everyday essentials.{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}Discover style, quality, and convenience with A.K.D Fashion and Design, your destination for trendy clothing, stylish footwear.{% endblock %}">
     <meta property="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.jpg' %}{% endblock %}">
 
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
@@ -32,6 +32,36 @@
     
     <!-- Tailwind CSS Built Styles -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}?v=1.1">
+    
+    <!-- Mobile Menu Styles -->
+    <style>
+        .mobile-menu-enter {
+            animation: slideDown 300ms ease-in-out forwards;
+        }
+        .mobile-menu-exit {
+            animation: slideUp 300ms ease-in-out forwards;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -66,14 +96,14 @@
                         
                         <!-- Search Bar -->
                         <form action="{% url 'products:search' %}" method="GET" class="relative pl-4 flex items-center">
-                            <select name="category" class="h-full border border-gray-200 border-r-0 py-2 pl-3 pr-6 text-sm bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-l-full appearance-none select-arrow z-10 font-medium">
+                            <select name="category" class="h-full border border-gray-200 border-r-0 py-2 pl-3 pr-6 text-sm bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-l-lg">
                                 <option value="">All Categories</option>
                                 {% for cat in global_categories %}
                                 <option value="{{ cat.slug }}">{{ cat.name }}</option>
                                 {% endfor %}
                             </select>
                             <div class="relative flex-1">
-                                <input type="text" name="q" placeholder="Search..." required class="pl-9 pr-4 py-2 border border-gray-200 border-l-0 rounded-r-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all w-32 lg:w-48 bg-white text-gray-800">
+                                <input type="text" name="q" placeholder="Search..." required class="pl-9 pr-4 py-2 border border-gray-200 border-l-0 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg style="width: 16px; height: 16px;" class="text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
                                 </div>
@@ -95,13 +125,13 @@
                         <a href="{% url 'auth:logout' %}" class="text-gray-600 hover:text-blue-600 transition duration-150 font-medium">Logout</a>
                     {% else %}
                         <a href="{% url 'auth:login' %}" class="text-gray-600 hover:text-blue-600 font-medium transition duration-150">Login</a>
-                        <a href="{% url 'auth:register' %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow font-medium hover:bg-blue-700 transition duration-200 transform hover:-translate-y-0.5">Register</a>
+                        <a href="{% url 'auth:register' %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow font-medium hover:bg-blue-700 transition duration-200 transform hover:-translate-y-0.5">Sign Up</a>
                     {% endif %}
                     
                     <a href="{% url 'cart:cart' %}" class="relative text-gray-600 hover:text-blue-600 transition duration-150 group">
-                        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"></path></svg>
+                        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         {% if user.is_authenticated and user.cart.items.count > 0 %}
-                            <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full border-2 border-white shadow-sm">
+                            <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full border-2 border-white">
                                 {{ user.cart.items.count }}
                             </span>
                         {% endif %}
@@ -109,9 +139,9 @@
                 </div>
 
                 <!-- Hamburger Icon (Mobile Only) -->
-                <div class="md:hidden flex items-center">
-                    <a href="{% url 'cart:cart' %}" class="relative text-gray-600 mr-4">
-                        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"></path></svg>
+                <div class="md:hidden flex items-center gap-3">
+                    <a href="{% url 'cart:cart' %}" class="relative text-gray-600 mr-2">
+                        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         {% if user.is_authenticated and user.cart.items.count > 0 %}
                             <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-[0.6rem] font-bold text-white bg-red-600 rounded-full">
                                 {{ user.cart.items.count }}
@@ -121,10 +151,10 @@
                     <button id="mobile-menu-button" type="button" 
                             aria-controls="mobile-menu"
                             aria-expanded="false"
-                            class="relative z-[70] text-blue-600 hover:text-blue-800 focus:outline-none p-3 rounded-xl bg-blue-50/80 shadow-sm border border-blue-100" 
-                            style="width: 48px; height: 48px; display: flex; align-items: center; justify-center; -webkit-tap-highlight-color: transparent;">
+                            class="relative text-blue-600 hover:text-blue-800 focus:outline-none p-2.5 rounded-xl bg-blue-50/80 shadow-sm border border-blue-100 transition-colors duration-200" 
+                            style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
                         <span class="sr-only">Open main menu</span>
-                        <svg style="width: 28px; height: 28px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
@@ -132,18 +162,21 @@
             </div>
         </div>
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden border-t border-gray-100 bg-gray-50 hidden">
+        <div id="mobile-menu" 
+             class="md:hidden border-t border-gray-100 bg-gray-50 hidden overflow-hidden" 
+             role="navigation"
+             aria-label="Mobile navigation">
             <!-- Mobile Search -->
             <div class="p-4 border-b border-gray-200">
-                <form action="{% url 'products:search' %}" method="GET" class="relative flex">
-                    <select name="category" class="border border-gray-300 border-r-0 py-2 pl-3 pr-6 text-sm bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-l-lg appearance-none select-arrow font-medium w-32">
+                <form action="{% url 'products:search' %}" method="GET" class="relative flex gap-1">
+                    <select name="category" class="border border-gray-300 border-r-0 py-2 pl-3 pr-6 text-sm bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-l-lg">
                         <option value="">All Categories</option>
                         {% for cat in global_categories %}
                         <option value="{{ cat.slug }}">{{ cat.name }}</option>
                         {% endfor %}
                     </select>
                     <div class="relative flex-1">
-                        <input type="text" name="q" placeholder="Search..." required class="w-full pl-9 pr-4 py-2 border border-gray-300 border-l-0 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <input type="text" name="q" placeholder="Search..." required class="w-full pl-9 pr-4 py-2 border border-gray-300 border-l-0 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg style="width: 16px; height: 16px;" class="text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
                         </div>
@@ -151,23 +184,41 @@
                 </form>
             </div>
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="{% url 'core:home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">Home</a>
-                <a href="{% url 'products:product_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">Products</a>
-                <a href="{% url 'core:about' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">About</a>
-                <a href="{% url 'core:contact' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">Contact</a>
+                <a href="{% url 'core:home' %}" 
+                   onclick="closeMobileMenu()"
+                   class="block px-3 py-2.5 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">Home</a>
+                <a href="{% url 'products:product_list' %}" 
+                   onclick="closeMobileMenu()"
+                   class="block px-3 py-2.5 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">Products</a>
+                <a href="{% url 'core:about' %}" 
+                   onclick="closeMobileMenu()"
+                   class="block px-3 py-2.5 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">About</a>
+                <a href="{% url 'core:contact' %}" 
+                   onclick="closeMobileMenu()"
+                   class="block px-3 py-2.5 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition duration-150">Contact</a>
             </div>
             <div class="pt-4 pb-4 border-t border-gray-200">
                 <div class="px-5 space-y-3">
                     {% if user.is_authenticated %}
                         <p class="text-sm font-medium text-gray-500">Logged in as <span class="font-bold text-gray-800">{{ user.first_name|default:user.username|default:user.email }}</span></p>
-                        <a href="{% url 'auth:profile' %}" class="block w-full text-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-base font-medium text-blue-600 bg-white hover:bg-blue-50">Profile</a>
+                        <a href="{% url 'auth:profile' %}" 
+                           onclick="closeMobileMenu()"
+                           class="block w-full text-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-base font-medium text-blue-600 bg-white hover:bg-blue-50 transition duration-150">Profile</a>
                         {% if user.is_staff %}
-                            <a href="/management/" class="block w-full text-center px-4 py-2 border border-indigo-600 rounded-md shadow-sm text-base font-medium text-white bg-indigo-600">Management Portal</a>
+                            <a href="/management/" 
+                               onclick="closeMobileMenu()"
+                               class="block w-full text-center px-4 py-2 border border-indigo-600 rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">Management Portal</a>
                         {% endif %}
-                        <a href="{% url 'auth:logout' %}" class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700">Logout</a>
+                        <a href="{% url 'auth:logout' %}" 
+                           onclick="closeMobileMenu()"
+                           class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-150">Logout</a>
                     {% else %}
-                        <a href="{% url 'auth:login' %}" class="block w-full text-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-base font-medium text-blue-600 bg-white hover:bg-blue-50">Login</a>
-                        <a href="{% url 'auth:register' %}" class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700">Register</a>
+                        <a href="{% url 'auth:login' %}" 
+                           onclick="closeMobileMenu()"
+                           class="block w-full text-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-base font-medium text-blue-600 bg-white hover:bg-blue-50 transition duration-150">Login</a>
+                        <a href="{% url 'auth:register' %}" 
+                           onclick="closeMobileMenu()"
+                           class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-150">Sign Up</a>
                     {% endif %}
                 </div>
             </div>
@@ -224,19 +275,19 @@
                 <div>
                     <h3 class="text-lg font-bold mb-5 tracking-tight">Contact</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> acholkuoldeng55@gmail.com</li>
-                        <li class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> +211929869511  +211980114219</li>
-                        <li class="flex items-start"><svg class="w-4 h-4 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Juba South Sudan</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>support@akdfashion.com</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>+211 929 869 511</li>
+                        <li class="flex items-start"><svg class="w-4 h-4 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Juba, South Sudan</li>
                     </ul>
                     <div class="mt-6 flex space-x-4">
                         <a href="https://wa.me/211929869511" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-green-500 transition-colors" title="Chat on WhatsApp">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.213.578 4.372 1.674 6.276L.003 24l5.856-1.536A11.96 11.96 0 0012.031 24c6.646 0 12.031-5.385 12.031-12.031S18.677 0 12.031 0zm6.549 17.151c-.279.789-1.625 1.492-2.234 1.543-.611.05-1.391-.018-4.258-1.205-3.447-1.428-5.711-5.011-5.885-5.244-.175-.233-1.408-1.875-1.408-3.576 0-1.701.884-2.54 1.198-2.889.314-.349.687-.436.916-.436.23 0 .46.002.665.012.213.01.496-.08.775.592.288.694.981 2.392 1.068 2.566.087.175.145.378.029.611-.116.233-.175.378-.349.576-.175.198-.364.426-.525.592-.175.175-.361.368-.158.718.203.349.905 1.496 1.944 2.422 1.341 1.196 2.457 1.564 2.806 1.739.349.175.553.146.757-.087.203-.233.873-1.018 1.106-1.367.233-.349.467-.291.785-.175.32.116 2.008.946 2.356 1.12.349.175.582.262.669.407.087.146.087.844-.192 1.633z" /></svg>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.213.578 4.372 1.674 6.276L.003 24l5.856-1.536A11.96 11.96 0 0012.031 24c6.646 0 12.031-5.385 12.031-12.031C24.062 5.385 18.677 0 12.031 0zm0 21.97c-1.98 0-3.92-.503-5.614-1.469l-.402-.23-4.165 1.093.011-5.857-.297-.472A10.002 10.002 0 0112.031 2.06c5.527 0 10.03 4.502 10.03 10.031s-4.503 10.03-10.03 10.03z"></path></svg>
                         </a>
                         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-500 transition-colors" title="Follow on Facebook">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
                         </a>
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-pink-500 transition-colors" title="Follow on Instagram">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.017 0C8.396 0 7.996.014 6.79.067 5.584.12 4.775.302 4.084.588c-.693.286-1.279.672-1.864 1.257C1.635 2.43 1.249 3.016.963 3.709c-.286.691-.468 1.5-.521 2.706C.386 7.621.372 8.021.372 11.642s.014 3.996.067 5.202c.053 1.206.235 2.015.521 2.706.286.693.672 1.279 1.257 1.864.585.585 1.171.971 1.864 1.257.691.286 1.5.468 2.706.521C7.621 23.614 8.021 23.628 11.642 23.628s3.996-.014 5.202-.067c1.206-.053 2.015-.235 2.706-.521.693-.286 1.279-.672 1.864-1.257.585-.585.971-1.171 1.257-1.864.286-.691.468-1.5.521-2.706.067-1.206.081-1.606.081-5.227s-.014-3.996-.081-5.202c-.053-1.206-.235-2.015-.521-2.706-.286-.693-.672-1.279-1.257-1.864C21.57 1.635 20.984 1.249 20.291.963c-.691-.286-1.5-.468-2.706-.521C15.638.386 15.238.372 11.617.372c-3.621 0-4.021.014-5.227.067zM11.617 2.372c3.526 0 3.946.013 5.342.07 1.326.054 2.055.28 2.526.468.628.247 1.077.546 1.548.999.472.453.771.902.999 1.548.188.471.414 1.2.468 2.526.057 1.396.07 1.816.07 5.342s-.013 3.946-.07 5.342c-.054 1.326-.28 2.055-.468 2.526-.228.628-.527 1.077-.999 1.548-.453.472-.902.771-1.548.999-.471.188-1.2.414-2.526.468-1.396.057-1.816.07-5.342.07s-3.946-.013-5.342-.07c-1.326-.054-2.055-.28-2.526-.468-.628-.228-1.077-.527-1.548-.999-.472-.453-.771-.902-.999-1.548-.188-.471-.414-1.2-.468-2.526-.057-1.396-.07-1.816-.07-5.342s.013-3.946.07-5.342c.054-1.326.28-2.055.468-2.526.228-.628.527-1.077.999-1.548.453-.472.902-.771 1.548-.999.471-.188 1.2-.414 2.526-.468 1.396-.057 1.816-.07 5.342-.07zM11.617 6.932a4.685 4.685 0 100 9.37 4.685 4.685 0 000-9.37zm0 7.72a3.035 3.035 0 110-6.07 3.035 3.035 0 010 6.07zm5.884-8.568a1.094 1.094 0 11-2.188 0 1.094 1.094 0 012.188 0z"/></svg>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.017 0C8.396 0 7.996.014 6.79.067 5.584.12 4.775.302 4.084.588c-.693.286-1.279.672-1.864 1.257-.585.585-.971 1.171-1.257 1.864-.286.691-.468 1.5-.521 2.706C.014 7.997 0 8.396 0 12.017c0 3.621.014 4.02.067 5.226.053 1.206.235 2.015.521 2.706.286.693.672 1.279 1.257 1.864.585.585 1.171.971 1.864 1.257.691.286 1.5.468 2.706.521 1.206.053 1.605.067 5.226.067s4.02-.014 5.226-.067c1.206-.053 2.015-.235 2.706-.521.693-.286 1.279-.672 1.864-1.257.585-.585.971-1.171 1.257-1.864.286-.691.468-1.5.521-2.706.053-1.206.067-1.605.067-5.226s-.014-4.02-.067-5.226c-.053-1.206-.235-2.015-.521-2.706-.286-.693-.672-1.279-1.257-1.864-.585-.585-1.171-.971-1.864-1.257-.691-.286-1.5-.468-2.706-.521C16.037.014 15.638 0 12.017 0zm0 2.16c3.563 0 3.986.013 5.192.066 1.25.057 1.93.243 2.382.404.6.232.986.556 1.416.986.43.43.754.816.986 1.416.161.452.347 1.132.404 2.382.053 1.206.066 1.629.066 5.192s-.013 3.986-.066 5.192c-.057 1.25-.243 1.93-.404 2.382-.232.6-.556.986-.986 1.416-.43.43-.816.754-1.416.986-.452.161-1.132.347-2.382.404-1.206.053-1.629.066-5.192.066s-3.986-.013-5.192-.066c-1.25-.057-1.93-.243-2.382-.404-.6-.232-.986-.556-1.416-.986-.43-.43-.754-.816-.986-1.416-.161-.452-.347-1.132-.404-2.382-.053-1.206-.066-1.629-.066-5.192s.013-3.986.066-5.192c.057-1.25.243-1.93.404-2.382.232-.6.556-.986.986-1.416.43-.43.816-.754 1.416-.986.452-.161 1.132-.347 2.382-.404 1.206-.053 1.629-.066 5.192-.066m0-3.6a8.617 8.617 0 100 17.234 8.617 8.617 0 000-17.234m0 14.27a5.653 5.653 0 110 -11.306 5.653 5.653 0 010 11.306m10.905-14.894a2.016 2.016 0 11-4.032 0 2.016 2.016 0 014.032 0z"></path></svg>
                         </a>
                     </div>
                 </div>
@@ -276,6 +327,30 @@
 
     <!-- Global Scripts: Intersection Observer & Mobile Menu -->
     <script>
+        // Close mobile menu function
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            
+            if (mobileMenu && mobileMenuButton) {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('mobile-menu-enter');
+                mobileMenu.classList.add('mobile-menu-exit');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                
+                // Reset to hamburger icon
+                const iconPath = mobileMenuButton.querySelector('#menu-icon-path');
+                if (iconPath) {
+                    iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                }
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    mobileMenu.classList.remove('mobile-menu-exit');
+                }, 300);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // Scroll Reveal Logic
             const observerOptions = {
@@ -293,33 +368,32 @@
 
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-            // Mobile Menu Toggle Logic
+            // Mobile Menu Toggle Logic with improved accessibility
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             
             if (mobileMenuButton && mobileMenu) {
-                // Function to toggle menu
+                // Function to toggle menu with smooth transitions
                 const toggleMenu = (event) => {
-                    event.stopPropagation(); // Stop event from propagating to document click handler
+                    event.stopPropagation();
                     
                     const isHidden = mobileMenu.classList.contains('hidden');
                     
                     if (isHidden) {
+                        // Open menu
                         mobileMenu.classList.remove('hidden');
+                        mobileMenu.classList.remove('mobile-menu-exit');
+                        mobileMenu.classList.add('mobile-menu-enter');
                         mobileMenuButton.setAttribute('aria-expanded', 'true');
-                        // Add close icon animation
+                        
+                        // Change to close icon
                         const iconPath = mobileMenuButton.querySelector('#menu-icon-path');
                         if (iconPath) {
                             iconPath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
                         }
                     } else {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        // Reset to hamburger icon
-                        const iconPath = mobileMenuButton.querySelector('#menu-icon-path');
-                        if (iconPath) {
-                            iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-                        }
+                        // Close menu
+                        closeMobileMenu();
                     }
                 };
                 
@@ -329,24 +403,16 @@
                 // Close menu when clicking outside
                 document.addEventListener('click', (event) => {
                     if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        const iconPath = mobileMenuButton.querySelector('#menu-icon-path');
-                        if (iconPath) {
-                            iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            closeMobileMenu();
                         }
                     }
                 });
                 
-                // Close menu on escape key
+                // Close menu on escape key with focus management
                 document.addEventListener('keydown', (event) => {
                     if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        const iconPath = mobileMenuButton.querySelector('#menu-icon-path');
-                        if (iconPath) {
-                            iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-                        }
+                        closeMobileMenu();
                         mobileMenuButton.focus();
                     }
                 });
@@ -439,9 +505,10 @@
             updateAllHeartsOnPage();
         });
     </script>
+    
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/211929869511" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-[#25D366] text-white rounded-full p-4 shadow-lg hover:bg-[#128C7E] transition-all transform hover:scale-110 z-50 flex items-center justify-center">
-        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.213.578 4.372 1.674 6.276L.003 24l5.856-1.536A11.96 11.96 0 0012.031 24c6.646 0 12.031-5.385 12.031-12.031S18.677 0 12.031 0zm6.549 17.151c-.279.789-1.625 1.492-2.234 1.543-.611.05-1.391-.018-4.258-1.205-3.447-1.428-5.711-5.011-5.885-5.244-.175-.233-1.408-1.875-1.408-3.576 0-1.701.884-2.54 1.198-2.889.314-.349.687-.436.916-.436.23 0 .46.002.665.012.213.01.496-.08.775.592.288.694.981 2.392 1.068 2.566.087.175.145.378.029.611-.116.233-.175.378-.349.576-.175.198-.364.426-.525.592-.175.175-.361.368-.158.718.203.349.905 1.496 1.944 2.422 1.341 1.196 2.457 1.564 2.806 1.739.349.175.553.146.757-.087.203-.233.873-1.018 1.106-1.367.233-.349.467-.291.785-.175.32.116 2.008.946 2.356 1.12.349.175.582.262.669.407.087.146.087.844-.192 1.633z" /></svg>
+    <a href="https://wa.me/211929869511" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-[#25D366] text-white rounded-full p-4 shadow-lg hover:bg-[#128C7E] transition-all duration-300 hover:scale-110 z-40" title="Chat with us on WhatsApp">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.213.578 4.372 1.674 6.276L.003 24l5.856-1.536A11.96 11.96 0 0012.031 24c6.646 0 12.031-5.385 12.031-12.031C24.062 5.385 18.677 0 12.031 0zm0 21.97c-1.98 0-3.92-.503-5.614-1.469l-.402-.23-4.165 1.093.011-5.857-.297-.472A10.002 10.002 0 0112.031 2.06c5.527 0 10.03 4.502 10.03 10.031s-4.503 10.03-10.03 10.03z"></path></svg>
     </a>
     
     {% block extra_js %}{% endblock %}
