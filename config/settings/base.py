@@ -355,3 +355,10 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
+
+# ==============================================================================
+# AUTHENTICATION REDIRECT CONFIGURATION
+# ==============================================================================
+LOGIN_REDIRECT_URL = 'auth:profile'
+LOGIN_URL = 'auth:login'
+LOGOUT_REDIRECT_URL = 'core:home'
