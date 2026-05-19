@@ -76,7 +76,7 @@ class UserProfileView(APIView):
     
     def get(self, request):
         user = request.user
-        preferences = user.preferences if hasattr(user, 'preferences') else None
+        preferences = getattr(user, 'preferences', None)
         return Response({
             'user': UserSerializer(user).data,
             'preferences': UserPreferencesSerializer(preferences).data if preferences else None,
@@ -139,11 +139,11 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
         context['user'] = user
         context['preferences'] = getattr(user, 'preferences', None)
         context['profile_form'] = CustomUserChangeForm(instance=user)
-        context['preferences_form'] = UserPreferencesForm(instance=user.preferences) if hasattr(user, 'preferences') else None
+        context['preferences_form'] = UserPreferencesForm(instance=context['preferences']) if context['preferences'] else None
         
         # Inject Vendor specific dashboard statistics
-        if user.role == 'vendor' and hasattr(user, 'vendor_profile'):
-            vendor = user.vendor_profile
+        vendor = getattr(user, 'vendor_profile', None)
+        if user.role == 'vendor' and vendor:
             context['vendor'] = vendor
             context['vendor_products_count'] = vendor.products.count()
             
