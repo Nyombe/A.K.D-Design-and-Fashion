@@ -123,7 +123,7 @@ class RegisterWebView(CreateView):
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
-        user = form.save()
+        # NOTE: Do NOT call form.save() here — CreateView.form_valid() already does it.
         return super().form_valid(form)
 
 
@@ -183,5 +183,5 @@ class VendorRegisterWebView(CreateView):
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
-        user = form.save()
+        # NOTE: Do NOT call form.save() here — CreateView.form_valid() already does it.
         return super().form_valid(form)

@@ -119,6 +119,9 @@ class VendorCreationForm(CustomUserCreationForm):
         user.is_active = True
         if commit:
             user.save()
+            # Explicitly create UserPreferences for vendor users.
+            # super().save(commit=False) skips this step in CustomUserCreationForm.
+            UserPreferences.objects.get_or_create(user=user)
             from django.utils.text import slugify
             from .models import Vendor
             slug = slugify(self.cleaned_data.get('shop_name'))
