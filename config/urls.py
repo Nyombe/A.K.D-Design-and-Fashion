@@ -9,11 +9,10 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 from products.sitemaps import ProductSitemap, CategorySitemap, StaticViewSitemap
 
-from django_otp.admin import OTPAdminSite
-from django_otp.forms import OTPAuthenticationForm
+from django_otp.admin import OTPAdminSite, OTPAdminAuthenticationForm
 from django_otp import devices_for_user
 
-class FlexOTPAuthenticationForm(OTPAuthenticationForm):
+class FlexOTPAuthenticationForm(OTPAdminAuthenticationForm):
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -29,13 +28,29 @@ class FlexOTPAuthenticationForm(OTPAuthenticationForm):
                     break
             
             if not has_confirmed_device:
-                from django.contrib.auth.forms import AuthenticationForm
-                return super(OTPAuthenticationForm, self).clean()
+                from django.contrib.admin.forms import AdminAuthenticationForm
+                return AdminAuthenticationForm.clean(self)
                 
         return super().clean()
 
 class FlexOTPAdminSite(OTPAdminSite):
     login_form = FlexOTPAuthenticationForm
+    
+    def has_permission(self, request):
+        if not request.user.is_authenticated:
+            return False
+            
+        has_confirmed_device = False
+        for device in devices_for_user(request.user):
+            if device.confirmed:
+                has_confirmed_device = True
+                break
+                
+        if has_confirmed_device:
+            return super().has_permission(request)
+            
+        from django.contrib.admin.sites import AdminSite
+        return AdminSite.has_permission(self, request)
 
 admin.site.__class__ = FlexOTPAdminSite
 
