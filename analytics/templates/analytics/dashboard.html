@@ -7,15 +7,25 @@
 {% block extrahead %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+    body {
+        background: linear-gradient(135deg, #09090b 0%, #18181b 100%);
+        color: #f4f4f5;
+    }
     .card-metric {
         transition: transform 0.3s ease;
     }
     .card-metric:hover {
         transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(212, 175, 55, 0.15);
+        border-color: rgba(212, 175, 55, 0.4);
     }
     .metric-value {
         font-size: 1.8rem;
-        font-weight: 700;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     .chart-container {
         position: relative;
@@ -67,20 +77,22 @@
         }
     }
     .card {
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
+        background: #111113;
+        border: 1px solid rgba(212, 175, 55, 0.15);
         border-radius: 1.25rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        color: #f4f4f5;
     }
     .card-header {
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        background: #18181b;
     }
     .card-body {
         padding: 1.25rem;
     }
     .shadow {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     .mb-4 {
         margin-bottom: 1rem;
@@ -96,25 +108,27 @@
         justify-content: center;
         padding: 0.5rem 0.9rem;
         border-radius: 9999px;
-        border: 1px solid transparent;
-        background: #ffffff;
-        color: #2563eb;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        background: #18181b;
+        color: #d4af37;
         text-decoration: none;
         font-size: 0.85rem;
         font-weight: 600;
         transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
     }
     .btn:hover {
-        background: #eff6ff;
+        background: rgba(212, 175, 55, 0.1);
+        color: #ffd700;
     }
     .btn-outline-primary {
-        border-color: #2563eb;
-        color: #2563eb;
+        border-color: rgba(212, 175, 55, 0.4);
+        color: #d4af37;
     }
     .btn-outline-primary.active,
     .btn-outline-primary:hover {
-        background: #2563eb;
-        color: #ffffff;
+        background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+        color: #000000;
+        border-color: #ffd700;
     }
     .text-xs {
         font-size: 0.75rem;
@@ -124,23 +138,28 @@
         letter-spacing: 0.08em;
     }
     .text-muted {
-        color: #6b7280;
+        color: #a1a1aa !important;
     }
     .text-gray-800 {
-        color: #1f2937;
+        color: #f4f4f5 !important;
     }
     .border-left-success {
-        border-left: 0.5rem solid #10b981;
+        border-left: 0.5rem solid #ffd700;
     }
     .border-left-primary {
-        border-left: 0.5rem solid #2563eb;
+        border-left: 0.5rem solid #d4af37;
     }
     .border-left-info {
-        border-left: 0.5rem solid #0ea5e9;
+        border-left: 0.5rem solid #aa7c11;
     }
     .border-left-warning {
-        border-left: 0.5rem solid #f59e0b;
+        border-left: 0.5rem solid #6a5312;
     }
+    .text-success { color: #ffd700 !important; }
+    .text-primary { color: #d4af37 !important; }
+    .text-info { color: #aa7c11 !important; }
+    .text-warning { color: #85581a !important; }
+    
     .badge {
         display: inline-flex;
         align-items: center;
@@ -151,16 +170,19 @@
         font-weight: 700;
     }
     .badge-success {
-        background: #d1fae5;
-        color: #065f46;
+        background: rgba(255, 215, 0, 0.15);
+        color: #ffd700;
+        border: 1px solid rgba(255, 215, 0, 0.3);
     }
     .badge-danger {
-        background: #fee2e2;
-        color: #991b1b;
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
     }
     .badge-info {
-        background: #dbeafe;
-        color: #1d4ed8;
+        background: rgba(212, 175, 55, 0.1);
+        color: #d4af37;
+        border: 1px solid rgba(212, 175, 55, 0.2);
     }
     .table {
         width: 100%;
@@ -169,15 +191,17 @@
     .table th,
     .table td {
         padding: 0.85rem 1rem;
-        border: 1px solid #e5e7eb;
+        border: 1px solid rgba(212, 175, 55, 0.15);
+        color: #cbd5e1;
     }
     .table thead th {
-        background: #f8fafc;
+        background: #18181b;
+        color: #ffd700;
         font-weight: 700;
         text-align: left;
     }
     .table tbody tr:nth-child(even) {
-        background: #f8fafc;
+        background: rgba(212, 175, 55, 0.02);
     }
     .table-responsive {
         overflow-x: auto;
@@ -377,7 +401,28 @@
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'bottom'
+                position: 'bottom',
+                labels: {
+                    color: '#a1a1aa'
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: 'rgba(212, 175, 55, 0.08)'
+                },
+                ticks: {
+                    color: '#a1a1aa'
+                }
+            },
+            y: {
+                grid: {
+                    color: 'rgba(212, 175, 55, 0.08)'
+                },
+                ticks: {
+                    color: '#a1a1aa'
+                }
             }
         }
     };
@@ -390,8 +435,8 @@
             datasets: [{
                 label: 'Revenue',
                 data: {{ trend_data|safe }},
-                borderColor: '#4e73df',
-                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                borderColor: '#ffd700',
+                backgroundColor: 'rgba(255, 215, 0, 0.05)',
                 fill: true,
                 tension: 0.3
             }]
@@ -406,7 +451,7 @@
             labels: {{ category_labels|safe }},
             datasets: [{
                 data: {{ category_data|safe }},
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796']
+                backgroundColor: ['#ffd700', '#e6c343', '#cda02a', '#b48115', '#9a6305', '#804900']
             }]
         },
         options: chartSettings
@@ -420,7 +465,7 @@
             datasets: [{
                 label: 'Revenue',
                 data: {{ location_data|safe }},
-                backgroundColor: '#1cc88a'
+                backgroundColor: '#d4af37'
             }]
         },
         options: {
@@ -437,7 +482,7 @@
             datasets: [{
                 label: 'Quantity Sold',
                 data: {{ product_data|safe }},
-                backgroundColor: '#36b9cc'
+                backgroundColor: '#ffd700'
             }]
         },
         options: chartSettings
