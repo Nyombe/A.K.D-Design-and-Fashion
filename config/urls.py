@@ -10,7 +10,34 @@ from django.views.generic import TemplateView
 from products.sitemaps import ProductSitemap, CategorySitemap, StaticViewSitemap
 
 from django_otp.admin import OTPAdminSite
-admin.site.__class__ = OTPAdminSite
+from django_otp.forms import OTPAuthenticationForm
+from django_otp import devices_for_user
+
+class FlexOTPAuthenticationForm(OTPAuthenticationForm):
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        
+        from django.contrib.auth import authenticate
+        user = authenticate(username=username, password=password)
+        
+        if user is not None and user.is_active:
+            has_confirmed_device = False
+            for device in devices_for_user(user):
+                if device.confirmed:
+                    has_confirmed_device = True
+                    break
+            
+            if not has_confirmed_device:
+                from django.contrib.auth.forms import AuthenticationForm
+                return super(OTPAuthenticationForm, self).clean()
+                
+        return super().clean()
+
+class FlexOTPAdminSite(OTPAdminSite):
+    login_form = FlexOTPAuthenticationForm
+
+admin.site.__class__ = FlexOTPAdminSite
 
 sitemaps = {
     'products': ProductSitemap,
