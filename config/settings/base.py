@@ -169,10 +169,11 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 # Content Security Policy (Basic default)
 SECURE_CONTENT_SECURITY_POLICY = {
     'default-src': ("'self'",),
-    'script-src': ("'self'",),
+    'script-src': ("'self'", "'unsafe-inline'", "https://js.stripe.com"),
     'style-src': ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com"),
-    'img-src': ("'self'", 'data:', 'https:'),
+    'img-src': ("'self'", 'data:', 'https:', "https://res.cloudinary.com"),
     'font-src': ("'self'", "https://fonts.gstatic.com"),
+    'frame-src': ("'self'", "https://js.stripe.com"),
 }
 
 # Axes Configuration (Rate Limiting)
