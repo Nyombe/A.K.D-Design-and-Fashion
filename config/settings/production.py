@@ -14,14 +14,20 @@ CSRF_TRUSTED_ORIGINS = [
     'https://achol-fashion-store.onrender.com',
 ]
 
+import sys
+
 _database_url = config('DATABASE_URL', default='')
 if not _database_url:
-    from django.core.exceptions import ImproperlyConfigured
-    raise ImproperlyConfigured(
-        "DATABASE_URL environment variable is not set. "
-        "Add your Neon Postgres connection string in the Render dashboard under "
-        "Environment → Environment Variables."
-    )
+    # During build phase (e.g. collectstatic), use a dummy in-memory database to allow assets build.
+    if 'collectstatic' in sys.argv:
+        _database_url = 'sqlite:///:memory:'
+    else:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured(
+            "DATABASE_URL environment variable is not set. "
+            "Add your Neon Postgres connection string in the Render dashboard under "
+            "Environment → Environment Variables."
+        )
 
 # Use parse() instead of config() — dj-database-url 2.x removed ssl_require from
 # config(), causing it to silently return {} on failure. parse() raises ValueError
