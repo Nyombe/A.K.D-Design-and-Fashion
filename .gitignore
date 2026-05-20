@@ -19,3 +19,13 @@ media/
 # OS generated
 .DS_Store
 Thumbs.db
+
+# Virtual environments & local python
+venv2/
+.venv2/
+.python312/
+python312.exe
+install_log.txt
+scripts/
+logs/
+

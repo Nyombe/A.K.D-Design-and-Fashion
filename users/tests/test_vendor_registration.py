@@ -8,8 +8,8 @@ class VendorRegistrationTest(TestCase):
     def test_vendor_registration_creates_vendor_and_preferences(self):
         data = {
             'email': 'testvendor2@example.com',
-            'password1': 'Testpass123',
-            'password2': 'Testpass123',
+            'password1': 'Testpass123!',
+            'password2': 'Testpass123!',
             'shop_name': 'Test Shop 2',
             'description': 'Automated test registration'
         }

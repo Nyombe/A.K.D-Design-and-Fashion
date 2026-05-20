@@ -137,9 +137,12 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = user
-        context['preferences'] = getattr(user, 'preferences', None)
+        
+        # Auto-create preferences if they don't exist
+        preferences, _ = UserPreferences.objects.get_or_create(user=user)
+        context['preferences'] = preferences
         context['profile_form'] = CustomUserChangeForm(instance=user)
-        context['preferences_form'] = UserPreferencesForm(instance=context['preferences']) if context['preferences'] else None
+        context['preferences_form'] = UserPreferencesForm(instance=preferences)
         
         # Inject Vendor specific dashboard statistics
         vendor = getattr(user, 'vendor_profile', None)
@@ -159,12 +162,11 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
                 return redirect('auth:profile')
         
         elif 'preferences_update' in request.POST:
-            preferences = getattr(user, 'preferences', None)
-            if preferences:
-                form = UserPreferencesForm(request.POST, instance=preferences)
-                if form.is_valid():
-                    form.save()
-                    return redirect('auth:profile')
+            preferences, _ = UserPreferences.objects.get_or_create(user=user)
+            form = UserPreferencesForm(request.POST, instance=preferences)
+            if form.is_valid():
+                form.save()
+                return redirect('auth:profile')
         
         return self.get(request, *args, **kwargs)
 

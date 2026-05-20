@@ -7,22 +7,30 @@ import dj_database_url
 
 DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com,akd-fashion-design.onrender.com,akd.com,www.akd.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='achol-fashion-store.onrender.com', cast=Csv())
 
 # Add CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = [
-    'https://akd-fashion-design.onrender.com',
-    'https://akd.com',
-    'https://www.akd.com',
-    'https://*.onrender.com',
+    'https://achol-fashion-store.onrender.com',
 ]
 
+_database_url = config('DATABASE_URL', default='')
+if not _database_url:
+    from django.core.exceptions import ImproperlyConfigured
+    raise ImproperlyConfigured(
+        "DATABASE_URL environment variable is not set. "
+        "Add your Neon Postgres connection string in the Render dashboard under "
+        "Environment → Environment Variables."
+    )
+
+# Use parse() instead of config() — dj-database-url 2.x removed ssl_require from
+# config(), causing it to silently return {} on failure. parse() raises ValueError
+# on a bad URL. SSL is handled by ?sslmode=require already in the Neon URL.
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL', default=''),
+    'default': dj_database_url.parse(
+        _database_url,
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=True,
     )
 }
 
@@ -59,5 +67,5 @@ CACHES = {
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "https://akd-fashion-design.onrender.com",
+    "https://achol-fashion-store.onrender.com",
 ]

@@ -32,6 +32,12 @@ echo "Verifying static files..."
 ls -R staticfiles/css || echo "staticfiles/css directory not found"
 
 echo "Running database migrations..."
+if [ -z "$DATABASE_URL" ]; then
+    echo "ERROR: DATABASE_URL environment variable is not set."
+    echo "  → Go to your Render dashboard → your service → Environment"
+    echo "  → Add DATABASE_URL with your Neon Postgres connection string."
+    exit 1
+fi
 python manage.py migrate
 
 echo "Build finished successfully!"
