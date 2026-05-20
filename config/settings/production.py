@@ -9,10 +9,17 @@ DEBUG = False
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='achol-fashion-store.onrender.com', cast=Csv())
 
+# Automatically trust Render's dynamic hostname if available
+RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default='')
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 # Add CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = [
     'https://achol-fashion-store.onrender.com',
 ]
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
 import sys
 
@@ -75,3 +82,5 @@ CACHES = {
 CORS_ALLOWED_ORIGINS = [
     "https://achol-fashion-store.onrender.com",
 ]
+if RENDER_EXTERNAL_HOSTNAME:
+    CORS_ALLOWED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
