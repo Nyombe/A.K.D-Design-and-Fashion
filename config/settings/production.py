@@ -7,7 +7,7 @@ import dj_database_url
 
 DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='achol-fashion-store.onrender.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='akd-fashion-design.onrender.com', cast=Csv())
 
 # Automatically trust Render's dynamic hostname if available
 RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default='')
@@ -16,7 +16,7 @@ if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
 
 # Add CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = [
-    'https://achol-fashion-store.onrender.com',
+    'https://akd-fashion-design.onrender.com',
 ]
 if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
@@ -86,7 +86,7 @@ CACHES = {
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "https://achol-fashion-store.onrender.com",
+    "https://akd-fashion-design.onrender.com",
 ]
 if RENDER_EXTERNAL_HOSTNAME:
     CORS_ALLOWED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
