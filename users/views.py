@@ -145,7 +145,10 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
         context['preferences_form'] = UserPreferencesForm(instance=preferences)
         
         # Inject Vendor specific dashboard statistics
-        vendor = getattr(user, 'vendor_profile', None)
+        vendor = None
+        if hasattr(user, 'vendor_profile'):
+            vendor = getattr(user, 'vendor_profile')
+        
         if user.role == 'vendor' and vendor:
             context['vendor'] = vendor
             context['vendor_products_count'] = vendor.products.count()
