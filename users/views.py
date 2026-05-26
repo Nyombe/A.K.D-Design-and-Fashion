@@ -8,6 +8,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.throttling import ScopedRateThrottle
+from django.utils.decorators import method_decorator
+from ratelimit.decorators import ratelimit
 
 from .models import CustomUser, UserPreferences
 from .forms import CustomUserCreationForm, CustomUserChangeForm, UserPreferencesForm, VendorCreationForm
@@ -39,6 +41,7 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@method_decorator(ratelimit(key='ip', rate='5/m', block=True), name='post')
 class LoginView(APIView):
     """API view for user login."""
     

@@ -40,5 +40,13 @@ if [ -z "$DATABASE_URL" ]; then
 fi
 python manage.py migrate
 
+echo "Migrating product images to Cloudinary (if configured)..."
+if [ -n "$CLOUDINARY_CLOUD_NAME" ] && [ -n "$CLOUDINARY_API_KEY" ] && [ -n "$CLOUDINARY_API_SECRET" ]; then
+    python manage.py migrate_images_to_cloudinary --old-host https://achol-fashion-store.onrender.com
+    echo "Image migration complete."
+else
+    echo "Cloudinary not configured — skipping image migration."
+fi
+
 echo "Build finished successfully!"
 exit 0

@@ -42,6 +42,34 @@ INSTALLED_APPS = [
     'analytics.apps.AnalyticsConfig',
 ]
 
+# Jazzmin admin theme configuration (modern UI tweaks)
+JAZZMIN_SETTINGS = {
+    'site_title': 'A.K.D Management',
+    'site_header': 'A.K.D Management',
+    'site_brand': 'A.K.D',
+    'site_logo_classes': 'img-circle',
+    'welcome_sign': 'Welcome to A.K.D Management',
+    'copyright': 'A.K.D © 2026',
+    'search_model': 'products.Product',
+    'show_ui_builder': True,
+    'custom_css': 'css/jazzmin_custom.css',
+    'show_sidebar': True,
+    'navigation_expanded': False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    'theme': 'dark',
+    'accent': 'teal',
+    'navbar_small_text': False,
+    'footer_small_text': False,
+    'body_small_text': False,
+    'brand_small_text': False,
+    'button_classes': {
+        'primary': 'btn btn-primary btn-rounded',
+        'secondary': 'btn btn-outline-secondary btn-rounded',
+    },
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',

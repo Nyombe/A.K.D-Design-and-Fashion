@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from core.models import TimeStampedModel
+from core.validators import validate_image_file
 
 
 class CustomUser(AbstractUser):
@@ -110,8 +112,22 @@ class Vendor(TimeStampedModel):
     shop_name = models.CharField(max_length=150, unique=True)
     slug = models.SlugField(max_length=150, unique=True)
     description = models.TextField(blank=True)
-    logo = models.ImageField(upload_to='vendor_logos/', blank=True)
-    banner = models.ImageField(upload_to='vendor_banners/', blank=True)
+    logo = models.ImageField(
+        upload_to='vendor_logos/',
+        blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'gif']),
+            validate_image_file,
+        ]
+    )
+    banner = models.ImageField(
+        upload_to='vendor_banners/',
+        blank=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'gif']),
+            validate_image_file,
+        ]
+    )
     
     # Verification & Status
     is_active = models.BooleanField(default=False)  # Requires platform admin verification to sell

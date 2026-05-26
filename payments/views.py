@@ -96,6 +96,9 @@ class StripeWebhookView(APIView):
         payload = request.body
         signature = request.META.get('HTTP_STRIPE_SIGNATURE')
         
+        if not signature:
+            return JsonResponse({'error': 'Missing Stripe signature header'}, status=400)
+
         payment_service = PaymentService(gateway='stripe')
         event = payment_service.verify_webhook(payload, signature)
         

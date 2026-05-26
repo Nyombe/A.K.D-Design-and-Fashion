@@ -17,8 +17,7 @@
 3. **Access the application**
    - Website: http://localhost:8000
    - Admin: http://localhost:8000/admin
-   - Email: admin@ecommerce.com
-   - Password: admin123
+   - Admin credentials are created by `python manage.py create_sample_data` or by running `python manage.py initadmin` with `ADMIN_PASSWORD` set in `.env`
 
 ### macOS/Linux Users
 
@@ -70,7 +69,7 @@ pip install -r requirements.txt
 
 # 3. Copy environment file
 cp .env.example .env
-# Edit .env with your settings
+# Edit .env with your settings, including ADMIN_PASSWORD and Stripe keys
 
 # 4. Run migrations
 python manage.py migrate

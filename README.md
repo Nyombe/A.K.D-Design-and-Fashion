@@ -87,7 +87,8 @@ The application will be available at `http://localhost:8000`
 
 ### Admin Access
 - URL: `http://localhost:8000/admin`
-- Credentials: admin@ecommerce.com / admin123
+- Admin account is created when you run `python manage.py create_sample_data` or `python manage.py initadmin`
+- If using `initadmin`, set `ADMIN_PASSWORD` in your environment before running the command
 
 ## 📁 Project Structure
 

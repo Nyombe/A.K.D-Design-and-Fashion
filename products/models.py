@@ -194,12 +194,17 @@ class ProductImage(BaseModel):
     """Product image model for multiple images per product."""
     
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    from core.validators import validate_image_file
+
     image = models.ImageField(
         upload_to='products/', 
         blank=True, 
         null=True, 
         max_length=255,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'gif'])]
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'gif']),
+            validate_image_file,
+        ]
     )
     image_url = models.URLField(max_length=500, blank=True, help_text='Optional: Use if not uploading an image file.')
     alt_text = models.CharField(max_length=255, blank=True)

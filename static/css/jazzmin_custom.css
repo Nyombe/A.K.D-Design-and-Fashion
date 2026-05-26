@@ -1,0 +1,49 @@
+/* Jazzmin custom admin styles: smoother, modern UX */
+:root{
+  --akd-accent: #10b981; /* teal/green accent */
+  --akd-bg: #f8fafc;
+  --akd-card: #ffffff;
+  --akd-muted: #6b7280;
+}
+
+html, body {
+  font-family: Inter, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--akd-bg);
+  color: #111827;
+}
+
+/* Smooth transitions */
+* { transition: all 160ms cubic-bezier(.2,.8,.2,1); }
+
+/* Card styling */
+.card, .module, .changeform, .dashboard 
+{ border-radius: 12px !important; box-shadow: 0 6px 18px rgba(17,24,39,0.06); background: var(--akd-card); }
+
+/* Buttons */
+.btn-rounded { border-radius: 999px !important; padding-left: 14px; padding-right: 14px; }
+.btn-primary { background-color: var(--akd-accent); border-color: transparent; color: #fff; }
+.btn-primary:hover { filter: brightness(0.95); }
+
+/* Table hover and row spacing */
+.change-list table.table tbody tr:hover { background: linear-gradient(90deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02)); }
+.change-list table.table td, .change-list table.table th { padding: 14px 12px; vertical-align: middle; }
+
+/* Sidebar tweaks */
+#header, .nav-sidebar { background: #111827; }
+.nav-sidebar a { color: rgba(255,255,255,0.9); }
+.nav-sidebar .module { border-radius: 10px; }
+
+/* Form elements */
+.form-row input, .form-row select, textarea { border-radius: 8px; border: 1px solid #e6edf3; padding: 10px; }
+
+/* Search inputs and headers */
+#searchbar_inner, .searchbox input { border-radius: 999px; padding: 10px 16px; }
+
+/* Responsive */
+@media (max-width: 768px){
+  .card, .module { border-radius: 8px; }
+}
+
+/* Subtle icon motion */
+.fa, .fas, .far, .material-icons { transition: transform 180ms ease; }
+.fa:hover, .fas:hover, .far:hover { transform: translateY(-2px); }
