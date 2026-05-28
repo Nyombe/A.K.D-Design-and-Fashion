@@ -1,0 +1,233 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ cl.opts.verbose_name_plural | capfirst }} | {{ block.super }}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin-modern.css' %}">
+  <style>
+    .change-list-wrapper {
+      padding: 2rem 1rem;
+    }
+
+    .changelist-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .changelist-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .add-item-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .add-item-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .filters-section {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .filters-section h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .filterspecs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .filterspec {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .filterspec h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .filterspec ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .filterspec li {
+      margin-bottom: 0.5rem;
+    }
+
+    .filterspec a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .filterspec a:hover {
+      color: var(--primary-light);
+    }
+
+    .filterspec .selected a {
+      color: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .results {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .results table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    .results thead th {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 2px solid var(--primary);
+      color: var(--text-primary);
+      font-weight: 700;
+      padding: 1.25rem;
+      text-align: left;
+    }
+
+    .results tbody td {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .results tbody tr {
+      transition: all 0.3s;
+    }
+
+    .results tbody tr:hover {
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .results tbody tr:hover td {
+      color: var(--text-primary);
+    }
+
+    .action-checkbox {
+      width: 20px;
+      height: 20px;
+    }
+
+    .results a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .results a:hover {
+      color: var(--text-primary);
+    }
+
+    .submit-row {
+      background: transparent;
+      padding: 2rem 1rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .submit-row .button {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .submit-row .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .pagination {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="change-list-wrapper">
+  <div class="changelist-header">
+    <h1 class="changelist-title">{{ cl.opts.verbose_name_plural | capfirst }}</h1>
+    {% if has_add_permission %}
+      <a href="{% url cl.opts|admin_urlname:'add' %}" class="add-item-btn">
+        + Add {{ cl.opts.verbose_name }}
+      </a>
+    {% endif %}
+  </div>
+
+  {% if cl.has_filters %}
+    <div class="filters-section">
+      <h2>Filters</h2>
+      <div class="filterspecs">
+        {% for spec in cl.filter_specs %}
+          {% admin_list_filter cl spec %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% block search %}
+    {% search_form cl %}
+  {% endblock %}
+
+  <div class="results">
+    {% if cl.result_list %}
+      {% result_list cl %}
+    {% else %}
+      <p style="padding: 2rem; text-align: center; color: var(--text-secondary);">
+        No {{ cl.opts.verbose_name_plural }} found.
+      </p>
+    {% endif %}
+  </div>
+
+  {% pagination cl %}
+</div>
+{% endblock %}
