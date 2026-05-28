@@ -209,7 +209,7 @@
       </div>
       <div class="stat-label">Total Users</div>
       <div class="stat-number">{{ dashboard_counts.users.count }}</div>
-      <a href="{% url 'admin:users_customuser_changelist' %}" class="stat-action">
+      <a href="{{ dashboard_urls.users_changelist }}" class="stat-action">
         Manage users →
       </a>
     </div>
@@ -221,7 +221,7 @@
       </div>
       <div class="stat-label">Active Products</div>
       <div class="stat-number">{{ dashboard_counts.products.count }}</div>
-      <a href="{% url 'admin:products_product_changelist' %}" class="stat-action">
+      <a href="{{ dashboard_urls.products_changelist }}" class="stat-action">
         View products →
       </a>
     </div>
@@ -233,7 +233,7 @@
       </div>
       <div class="stat-label">Total Orders</div>
       <div class="stat-number">{{ dashboard_counts.orders.count }}</div>
-      <a href="{% url 'admin:orders_order_changelist' %}" class="stat-action">
+      <a href="{{ dashboard_urls.orders_changelist }}" class="stat-action">
         View orders →
       </a>
     </div>
@@ -245,7 +245,7 @@
       </div>
       <div class="stat-label">Transactions</div>
       <div class="stat-number">{{ dashboard_counts.payments.count }}</div>
-      <a href="{% url 'admin:payments_payment_changelist' %}" class="stat-action">
+      <a href="{{ dashboard_urls.payments_changelist }}" class="stat-action">
         View payments →
       </a>
     </div>
@@ -268,19 +268,19 @@
   <div class="quick-actions">
     <h3>🚀 Quick Actions</h3>
     <div class="quick-actions-list">
-      <a href="{% url 'admin:products_product_add' %}" class="quick-action-btn">
+      <a href="{{ dashboard_urls.products_add }}" class="quick-action-btn">
         <i class="fas fa-plus"></i>
         Add Product
       </a>
-      <a href="{% url 'admin:users_customuser_add' %}" class="quick-action-btn">
+      <a href="{{ dashboard_urls.users_add }}" class="quick-action-btn">
         <i class="fas fa-user-plus"></i>
         Add User
       </a>
-      <a href="{% url 'admin:orders_order_changelist' %}" class="quick-action-btn">
+      <a href="{{ dashboard_urls.orders_changelist }}" class="quick-action-btn">
         <i class="fas fa-list"></i>
         View Orders
       </a>
-      <a href="{% url 'analytics:dashboard' %}" class="quick-action-btn">
+      <a href="{{ dashboard_urls.analytics_dashboard }}" class="quick-action-btn">
         <i class="fas fa-chart-line"></i>
         Analytics
       </a>
