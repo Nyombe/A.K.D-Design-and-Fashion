@@ -43,7 +43,7 @@ class ProductAdmin(admin.ModelAdmin):
             discount_price = obj.discount_price
             if discount_price and discount_price < price:
                 return mark_safe(
-                    f'<div style="display: flex; flex-direction: column; align-items: flex-start;"'
+                    f'<div style="display: flex; flex-direction: column; align-items: flex-start;">'
                     f'<span style="color: #ff3c3c; font-weight: bold; font-size: 1.2em; background: #fff0f0; border-radius: 8px; padding: 2px 8px; margin-bottom: 2px; display: inline-block;">US${float(discount_price):.2f}</span>'
                     f'<span style="text-decoration: line-through; color: #888; font-size: 0.95em;">US${float(price):.2f}</span>'
                     f'</div>'
