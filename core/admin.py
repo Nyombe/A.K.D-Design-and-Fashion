@@ -19,12 +19,21 @@ def _custom_admin_index(request, extra_context=None):
     from payments.models import Payment
 
     extra_context = extra_context or {}
-    extra_context.setdefault('dashboard_counts', {
-        'users': {'count': CustomUser.objects.count()},
-        'products': {'count': Product.objects.filter(is_active=True).count()},
-        'orders': {'count': Order.objects.count()},
-        'payments': {'count': Payment.objects.count()},
-    })
+    
+    try:
+        extra_context.setdefault('dashboard_counts', {
+            'users': {'count': CustomUser.objects.count()},
+            'products': {'count': Product.objects.filter(is_active=True).count()},
+            'orders': {'count': Order.objects.count()},
+            'payments': {'count': Payment.objects.count()},
+        })
+    except Exception:
+        extra_context.setdefault('dashboard_counts', {
+            'users': {'count': 0},
+            'products': {'count': 0},
+            'orders': {'count': 0},
+            'payments': {'count': 0},
+        })
 
     dashboard_urls = {}
     admin_link_map = {
@@ -37,10 +46,10 @@ def _custom_admin_index(request, extra_context=None):
     }
 
     for key, (model, action) in admin_link_map.items():
-        opts = model._meta
         try:
+            opts = model._meta
             dashboard_urls[key] = reverse(f'admin:{opts.app_label}_{opts.model_name}_{action}')
-        except NoReverseMatch:
+        except (NoReverseMatch, Exception):
             dashboard_urls[key] = '#'
 
     try:
