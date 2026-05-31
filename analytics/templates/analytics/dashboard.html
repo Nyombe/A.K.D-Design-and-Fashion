@@ -370,7 +370,7 @@
                     <tbody>
                         {% for order in recent_orders %}
                         <tr>
-                            <td><a href="{% url 'admin:orders_order_change' order.id %}">{{ order.order_number }}</a></td>
+                            <td><a href="{% url 'admin:orders_order_change' order.pk %}">{{ order.order_number }}</a></td>
                             <td>{{ order.user.email }}</td>
                             <td>{{ order.created_at|date:"M d, Y" }}</td>
                             <td>

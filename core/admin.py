@@ -27,20 +27,26 @@ def _custom_admin_index(request, extra_context=None):
     })
 
     dashboard_urls = {}
-    mapping = {
-        'users_changelist': 'admin:users_customuser_changelist',
-        'users_add': 'admin:users_customuser_add',
-        'products_changelist': 'admin:products_product_changelist',
-        'products_add': 'admin:products_product_add',
-        'orders_changelist': 'admin:orders_order_changelist',
-        'payments_changelist': 'admin:payments_payment_changelist',
-        'analytics_dashboard': 'analytics:dashboard',
+    admin_link_map = {
+        'users_changelist': (CustomUser, 'changelist'),
+        'users_add': (CustomUser, 'add'),
+        'products_changelist': (Product, 'changelist'),
+        'products_add': (Product, 'add'),
+        'orders_changelist': (Order, 'changelist'),
+        'payments_changelist': (Payment, 'changelist'),
     }
-    for key, name in mapping.items():
+
+    for key, (model, action) in admin_link_map.items():
+        opts = model._meta
         try:
-            dashboard_urls[key] = reverse(name)
+            dashboard_urls[key] = reverse(f'admin:{opts.app_label}_{opts.model_name}_{action}')
         except NoReverseMatch:
             dashboard_urls[key] = '#'
+
+    try:
+        dashboard_urls['analytics_dashboard'] = reverse('analytics:dashboard')
+    except NoReverseMatch:
+        dashboard_urls['analytics_dashboard'] = '#'
 
     extra_context.setdefault('dashboard_urls', dashboard_urls)
     return _original_index(request, extra_context)
