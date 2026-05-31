@@ -38,24 +38,34 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
 
     def styled_price(self, obj):
-        if obj.discount_price:
+        try:
+            price = obj.price or 0
+            discount_price = obj.discount_price
+            if discount_price and discount_price < price:
+                return mark_safe(
+                    f'<div style="display: flex; flex-direction: column; align-items: flex-start;"'
+                    f'<span style="color: #ff3c3c; font-weight: bold; font-size: 1.2em; background: #fff0f0; border-radius: 8px; padding: 2px 8px; margin-bottom: 2px; display: inline-block;">US${float(discount_price):.2f}</span>'
+                    f'<span style="text-decoration: line-through; color: #888; font-size: 0.95em;">US${float(price):.2f}</span>'
+                    f'</div>'
+                )
             return mark_safe(
-                f'<div style="display: flex; flex-direction: column; align-items: flex-start;">'
-                f'<span style="color: #ff3c3c; font-weight: bold; font-size: 1.2em; background: #fff0f0; border-radius: 8px; padding: 2px 8px; margin-bottom: 2px; display: inline-block;">US${obj.discount_price:.2f}</span>'
-                f'<span style="text-decoration: line-through; color: #888; font-size: 0.95em;">US${obj.price:.2f}</span>'
-                f'</div>'
+                f'<span style="color: #ff3c3c; font-weight: bold; font-size: 1.2em; background: #fff0f0; border-radius: 8px; padding: 2px 8px;">US${float(price):.2f}</span>'
             )
-        return mark_safe(
-            f'<span style="color: #ff3c3c; font-weight: bold; font-size: 1.2em; background: #fff0f0; border-radius: 8px; padding: 2px 8px;">US${obj.price:.2f}</span>'
-        )
+        except Exception as e:
+            return mark_safe(f'<span style="color: #999;">N/A</span>')
     styled_price.short_description = 'Price'
 
     def stock_display(self, obj):
-        if obj.stock <= 0:
-            return mark_safe('<span style="color: red;">Out of Stock</span>')
-        elif obj.stock < obj.low_stock_threshold:
-            return format_html('<span style="color: orange;">Low ({} left)</span>', obj.stock)
-        return mark_safe('<span style="color: green;">In Stock</span>')
+        try:
+            stock = obj.stock or 0
+            threshold = obj.low_stock_threshold or 10
+            if stock <= 0:
+                return mark_safe('<span style="color: red;">Out of Stock</span>')
+            elif stock < threshold:
+                return format_html('<span style="color: orange;">Low ({} left)</span>', stock)
+            return mark_safe('<span style="color: green;">In Stock</span>')
+        except Exception:
+            return mark_safe('<span style="color: #999;">N/A</span>')
     stock_display.short_description = 'Stock'
 
 

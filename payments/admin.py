@@ -10,7 +10,11 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ('order__order_number', 'transaction_id')
 
     def amount_display(self, obj):
-        return f'₦{obj.amount}'
+        try:
+            amount = obj.amount or 0
+            return f'₦{amount}'
+        except Exception:
+            return 'N/A'
     amount_display.short_description = 'Amount'
 
     def status_badge(self, obj):

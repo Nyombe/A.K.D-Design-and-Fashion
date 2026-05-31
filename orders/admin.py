@@ -10,7 +10,11 @@ class CartAdmin(admin.ModelAdmin):
     search_fields = ('user__email',)
 
     def total_price_display(self, obj):
-        return f'₦{obj.get_total_price()}'
+        try:
+            total = obj.get_total_price() if hasattr(obj, 'get_total_price') else 0
+            return f'₦{total}'
+        except Exception:
+            return 'N/A'
     total_price_display.short_description = 'Total'
 
 
@@ -64,5 +68,9 @@ class OrderItemAdmin(admin.ModelAdmin):
     search_fields = ('order__order_number', 'product__name')
 
     def total_display(self, obj):
-        return f'₦{obj.get_total_price()}'
+        try:
+            total = obj.get_total_price() if hasattr(obj, 'get_total_price') else 0
+            return f'₦{total}'
+        except Exception:
+            return 'N/A'
     total_display.short_description = 'Total'

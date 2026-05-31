@@ -153,6 +153,10 @@ class Order(BaseModel):
     def __str__(self):
         return f"Order {self.order_number}"
 
+    def get_total_price(self):
+        """Get total price for this order."""
+        return self.total_amount
+
     def save(self, *args, **kwargs):
         """Generate order number if not set."""
         if not self.order_number:
