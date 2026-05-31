@@ -20,8 +20,17 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('product', 'quantity', 'price')
+    list_display = ('id', 'cart_user', 'product_name', 'quantity', 'price')
     search_fields = ('product__name',)
+    readonly_fields = ('price',)
+    
+    def cart_user(self, obj):
+        return obj.cart.user.email if obj.cart and obj.cart.user else 'N/A'
+    cart_user.short_description = 'User'
+    
+    def product_name(self, obj):
+        return obj.product.name if obj.product else 'Deleted Product'
+    product_name.short_description = 'Product'
 
 
 @admin.register(Order)
