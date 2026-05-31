@@ -9,45 +9,8 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 from products.sitemaps import ProductSitemap, CategorySitemap, StaticViewSitemap
 
-from django_otp.admin import OTPAdminSite, OTPAdminAuthenticationForm
-from django_otp import devices_for_user
-
-class FlexOTPAuthenticationForm(OTPAdminAuthenticationForm):
-    def clean_otp(self, user):
-        if user is None:
-            return
-            
-        has_confirmed_device = False
-        for device in devices_for_user(user):
-            if device.confirmed:
-                has_confirmed_device = True
-                break
-                
-        if not has_confirmed_device:
-            return
-            
-        return super().clean_otp(user)
-
-class FlexOTPAdminSite(OTPAdminSite):
-    login_form = FlexOTPAuthenticationForm
-    
-    def has_permission(self, request):
-        if not request.user.is_authenticated:
-            return False
-            
-        has_confirmed_device = False
-        for device in devices_for_user(request.user):
-            if device.confirmed:
-                has_confirmed_device = True
-                break
-                
-        if has_confirmed_device:
-            return super().has_permission(request)
-            
-        from django.contrib.admin.sites import AdminSite
-        return AdminSite.has_permission(self, request)
-
-admin.site.__class__ = FlexOTPAdminSite
+# OTP Admin is handled by middleware, not by class reassignment
+# This avoids breaking Jazzmin and other admin customizations
 
 sitemaps = {
     'products': ProductSitemap,
