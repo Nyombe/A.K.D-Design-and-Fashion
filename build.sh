@@ -40,6 +40,9 @@ if [ -z "$DATABASE_URL" ]; then
 fi
 python manage.py migrate
 
+echo "Creating admin superuser (if not exists)..."
+python manage.py initadmin
+
 echo "Migrating product images to Cloudinary (if configured)..."
 if [ -n "$CLOUDINARY_CLOUD_NAME" ] && [ -n "$CLOUDINARY_API_KEY" ] && [ -n "$CLOUDINARY_API_SECRET" ]; then
     python manage.py migrate_images_to_cloudinary --old-host https://achol-fashion-store.onrender.com
