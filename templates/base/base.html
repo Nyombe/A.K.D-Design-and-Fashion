@@ -124,6 +124,7 @@
                         {% endif %}
                         <a href="{% url 'auth:logout' %}" class="text-gray-600 hover:text-blue-600 transition duration-150 font-medium">Logout</a>
                     {% else %}
+                        <a href="{% url 'auth:register_vendor' %}" class="text-gold-400 hover:text-gold-300 font-medium transition duration-150 text-sm">🏪 Become Merchant</a>
                         <a href="{% url 'auth:login' %}" class="text-gray-600 hover:text-blue-600 font-medium transition duration-150">Login</a>
                         <a href="{% url 'auth:register' %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow font-medium hover:bg-blue-700 transition duration-200 transform hover:-translate-y-0.5">Sign Up</a>
                     {% endif %}
@@ -213,6 +214,9 @@
                            onclick="closeMobileMenu()"
                            class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-150">Logout</a>
                     {% else %}
+                        <a href="{% url 'auth:register_vendor' %}" 
+                           onclick="closeMobileMenu()"
+                           class="block w-full text-center px-4 py-2 border border-gold-500 rounded-md shadow-sm text-base font-medium text-gold-600 bg-white hover:bg-gold-50 transition duration-150">🏪 Become Merchant</a>
                         <a href="{% url 'auth:login' %}" 
                            onclick="closeMobileMenu()"
                            class="block w-full text-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-base font-medium text-blue-600 bg-white hover:bg-blue-50 transition duration-150">Login</a>
