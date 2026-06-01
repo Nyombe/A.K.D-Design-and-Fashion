@@ -1,0 +1,294 @@
+<!-- 
+A.K.D Fashion - Slide-out Cart Drawer
+Mobile-optimized, frictionless UX with ghost checkout
+Thumb-zone optimized (primary actions at bottom/center)
+-->
+
+{% load static %}
+
+<div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden opacity-0 pointer-events-none transition-opacity duration-300">
+    <!-- Backdrop -->
+    <div id="cartBackdrop" class="absolute inset-0 bg-black/50 transition-opacity duration-300" onclick="closeCartDrawer()"></div>
+    
+    <!-- Slide-out Panel -->
+    <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[420px] bg-white shadow-2xl transform translate-x-full transition-transform duration-300">
+        
+        <!-- Header: Sticky -->
+        <div class="sticky top-0 z-10 flex items-center justify-between p-6 bg-white border-b border-gray-100">
+            <h2 class="text-xl font-bold text-gray-900">Shopping Cart</h2>
+            <button onclick="closeCartDrawer()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Cart Items: Scrollable -->
+        <div id="cartItemsContainer" class="overflow-y-auto max-h-[calc(100vh-280px)] px-6 py-4">
+            <!-- Items will be populated here -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyCartState" class="h-full flex flex-col items-center justify-center px-6 py-12 text-center hidden">
+            <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+            <p class="text-gray-600 font-medium">Your cart is empty</p>
+            <a href="{% url 'products:product_list' %}" onclick="closeCartDrawer()" class="mt-4 text-indigo-600 hover:text-indigo-700 font-semibold">
+                Continue Shopping
+            </a>
+        </div>
+        
+        <!-- Footer: Sticky Pricing & Actions -->
+        <div class="sticky bottom-0 z-10 bg-white border-t border-gray-100 p-6 space-y-4">
+            
+            <!-- Pricing Breakdown -->
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span id="subtotalPrice">$0.00</span>
+                </div>
+                <div class="flex justify-between text-gray-600">
+                    <span>Shipping</span>
+                    <span id="shippingPrice" class="text-green-600 font-medium">Free</span>
+                </div>
+                <div class="flex justify-between text-gray-600">
+                    <span>Tax</span>
+                    <span id="taxPrice">$0.00</span>
+                </div>
+                <div class="pt-2 border-t border-gray-200 flex justify-between font-bold text-base">
+                    <span>Total</span>
+                    <span id="totalPrice" class="text-indigo-600">$0.00</span>
+                </div>
+            </div>
+            
+            <!-- Action Buttons: Thumb Zone Optimized -->
+            <div class="space-y-2">
+                <!-- Guest Checkout (Primary CTA at bottom for thumb zone) -->
+                <a href="/checkout/guest/" onclick="localStorage.setItem('cart', JSON.stringify(getCartData())); closeCartDrawer();" 
+                   class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-colors text-center block">
+                    Guest Checkout
+                </a>
+                
+                <!-- Sign in / Login if not authenticated -->
+                {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}" onclick="closeCartDrawer();" 
+                   class="w-full py-3 border-2 border-indigo-600 text-indigo-600 font-semibold rounded-full hover:bg-indigo-50 transition-colors text-center block">
+                    Sign In
+                </a>
+                {% else %}
+                <!-- View Full Cart for logged-in users -->
+                <a href="{% url 'orders:cart' %}" onclick="closeCartDrawer();" 
+                   class="w-full py-3 border-2 border-gray-300 text-gray-900 font-semibold rounded-full hover:bg-gray-50 transition-colors text-center block">
+                    View Full Cart
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Continue Shopping Link -->
+            <a href="{% url 'products:product_list' %}" onclick="closeCartDrawer();" class="block text-center text-gray-600 hover:text-gray-900 font-medium py-2">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<!-- CART ITEM COMPONENT (used in drawer) -->
+<template id="cartItemTemplate">
+    <div class="cart-item py-4 border-b border-gray-100 group" data-item-id="">
+        
+        <!-- Item: Grid Layout for Responsive -->
+        <div class="flex gap-3 mb-3">
+            <!-- Product Image -->
+            <div class="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                <img src="" class="w-full h-full object-cover" alt="Product">
+                <!-- Variant Badge if exists -->
+                <div class="absolute top-1 right-1 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded variant-badge hidden">
+                    <!-- e.g., "S, Blue" -->
+                </div>
+            </div>
+            
+            <!-- Product Details -->
+            <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-gray-900 text-sm truncate product-name"></h3>
+                <p class="text-xs text-gray-500 mt-1 variant-info"></p>
+                <p class="text-sm font-bold text-indigo-600 mt-2 item-price"></p>
+            </div>
+            
+            <!-- Remove Button (Right side, easy to tap) -->
+            <button onclick="removeFromCart(this)" class="p-2 hover:bg-red-100 rounded-lg transition-colors ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Quantity Selector: Compact -->
+        <div class="flex items-center gap-2">
+            <button onclick="decrementQuantity(this)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                </svg>
+            </button>
+            <input type="number" min="1" class="w-12 text-center px-2 py-1 border border-gray-200 rounded font-semibold quantity-input" value="1">
+            <button onclick="incrementQuantity(this)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+            </button>
+            <span class="text-sm text-gray-500 ml-auto">Stock: <span class="stock-available font-semibold">10</span></span>
+        </div>
+    </div>
+</template>
+
+
+<!-- JavaScript: Cart Drawer Logic -->
+<script>
+// Utility: Open/Close Cart Drawer
+function openCartDrawer() {
+    const drawer = document.getElementById('cartDrawer');
+    drawer.classList.remove('opacity-0', 'pointer-events-none');
+    drawer.querySelector('[id="cartDrawer"] > div:last-child').classList.remove('translate-x-full');
+    updateCartDisplay();
+}
+
+function closeCartDrawer() {
+    const drawer = document.getElementById('cartDrawer');
+    drawer.classList.add('opacity-0', 'pointer-events-none');
+    drawer.querySelector('[id="cartDrawer"] > div:last-child').classList.add('translate-x-full');
+}
+
+// Update Cart Display
+function updateCartDisplay() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+    const container = document.getElementById('cartItemsContainer');
+    const emptyState = document.getElementById('emptyCartState');
+    
+    if (cart.items.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+    } else {
+        container.innerHTML = '';
+        emptyState.classList.add('hidden');
+        
+        cart.items.forEach(item => {
+            renderCartItem(item, container);
+        });
+    }
+    
+    updateCartTotals();
+}
+
+// Render Individual Cart Item
+function renderCartItem(item, container) {
+    const template = document.getElementById('cartItemTemplate');
+    const clone = template.content.cloneNode(true);
+    
+    clone.querySelector('.cart-item').dataset.itemId = item.productId;
+    clone.querySelector('.product-name').textContent = item.productName;
+    clone.querySelector('.item-price').textContent = `$${(parseFloat(item.price) * item.quantity).toFixed(2)}`;
+    clone.querySelector('img').src = item.productImage;
+    clone.querySelector('.quantity-input').value = item.quantity;
+    clone.querySelector('.stock-available').textContent = item.stock;
+    
+    // Variant info
+    if (item.variantInfo) {
+        clone.querySelector('.variant-info').textContent = item.variantInfo;
+        clone.querySelector('.variant-badge').textContent = item.variantInfo;
+        clone.querySelector('.variant-badge').classList.remove('hidden');
+    }
+    
+    container.appendChild(clone);
+}
+
+// Update Cart Totals
+function updateCartTotals() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+    let subtotal = 0;
+    
+    cart.items.forEach(item => {
+        subtotal += parseFloat(item.price) * item.quantity;
+    });
+    
+    const tax = subtotal * 0.08;
+    const shipping = subtotal >= 100 ? 0 : 9.99;
+    const total = subtotal + tax + shipping;
+    
+    document.getElementById('subtotalPrice').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('taxPrice').textContent = `$${tax.toFixed(2)}`;
+    document.getElementById('shippingPrice').textContent = shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`;
+    document.getElementById('totalPrice').textContent = `$${total.toFixed(2)}`;
+}
+
+// Cart Actions
+function removeFromCart(button) {
+    const itemId = button.closest('.cart-item').dataset.itemId;
+    const cart = JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+    cart.items = cart.items.filter(item => item.productId != itemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartDisplay();
+}
+
+function incrementQuantity(button) {
+    const input = button.parentElement.querySelector('.quantity-input');
+    input.value = Math.min(parseInt(input.value) + 1, parseInt(button.parentElement.querySelector('.stock-available').textContent));
+    updateCartQuantity(input);
+}
+
+function decrementQuantity(button) {
+    const input = button.parentElement.querySelector('.quantity-input');
+    input.value = Math.max(1, parseInt(input.value) - 1);
+    updateCartQuantity(input);
+}
+
+function updateCartQuantity(input) {
+    const itemId = input.closest('.cart-item').dataset.itemId;
+    const quantity = parseInt(input.value);
+    const cart = JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+    const item = cart.items.find(i => i.productId == itemId);
+    if (item) {
+        item.quantity = quantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartDisplay();
+        updateCartCount();
+    }
+}
+
+function getCartData() {
+    return JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+}
+
+// Update Cart Count in Header
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+    const count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    document.querySelectorAll('.cart-count').forEach(el => {
+        el.textContent = count;
+        el.classList.toggle('hidden', count === 0);
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+});
+</script>
+
+<style>
+/* Smooth transitions for drawer */
+#cartDrawer {
+    transition: opacity 0.3s ease;
+}
+
+#cartDrawer > div:last-child {
+    transition: transform 0.3s ease;
+}
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+    #cartDrawer > div:last-child {
+        width: 100% !important;
+    }
+}
+</style>

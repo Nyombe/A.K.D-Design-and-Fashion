@@ -1,0 +1,239 @@
+<!-- 
+A.K.D Fashion - Luxury Bento Grid Homepage
+Modern, high-contrast minimalist design with scrollytelling
+Optimized for mobile thumb zone and premium brand aesthetic
+-->
+
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Luxury Fashion | A.K.D Design & Fashion{% endblock %}
+{% block meta_description %}Curated luxury fashion collection with exclusive designer pieces. Shop premium clothing and accessories.{% endblock %}
+
+{% block content %}
+<main class="overflow-hidden">
+    
+    <!-- HERO SECTION: Full-Screen Storytelling -->
+    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-black via-gray-900 to-black">
+        
+        <!-- Animated background blur orbs -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-indigo-600 opacity-20 blur-[120px] animate-pulse"></div>
+            <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-purple-600 opacity-20 blur-[120px] animate-pulse" style="animation-delay: 1s;"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="relative z-10 text-center px-6 max-w-3xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter leading-tight animate-fade-in">
+                LUXURY REDEFINED
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 mb-8 font-light tracking-wide animate-fade-in" style="animation-delay: 0.2s;">
+                Curated pieces for the discerning. Premium design meets conscious craftsmanship.
+            </p>
+            
+            <!-- CTA Button with Hover Animation -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.4s;">
+                <a href="{% url 'products:product_list' %}" class="group relative px-8 py-4 bg-white text-black font-semibold rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                    <span class="relative z-10 flex items-center gap-2">
+                        Explore Collection
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </span>
+                    <div class="absolute inset-0 bg-gray-100 -z-10 scale-0 group-hover:scale-100 transition-transform duration-300 rounded-full"></div>
+                </a>
+                
+                <a href="#featured" class="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-black transition-all duration-300">
+                    Shop Now
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+            <div class="animate-bounce">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </div>
+        </div>
+    </section>
+    
+    
+    <!-- BENTO GRID: Featured Collections Section -->
+    <section id="featured" class="py-24 px-6 md:px-12 bg-white">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Section Header -->
+            <div class="mb-16 text-center">
+                <span class="text-sm font-semibold tracking-widest text-indigo-600 uppercase">Featured</span>
+                <h2 class="text-4xl md:text-5xl font-black text-gray-900 mt-2 mb-4">Shop the Moment</h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">Handpicked pieces that define luxury and style this season.</p>
+            </div>
+            
+            <!-- Bento Grid: 4 Featured Items + Shop the Look -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[400px] md:auto-rows-[350px]">
+                
+                <!-- LARGE Featured Item 1 (2x2) -->
+                <div class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1495937751590-6793cd637a78?w=800&q=80" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                         alt="Premium Evening Wear">
+                    
+                    <!-- Overlay Info -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
+                        <div class="text-white transform group-hover:translate-y-0 translate-y-2 transition-transform">
+                            <p class="text-sm font-semibold tracking-widest uppercase mb-1">New Arrival</p>
+                            <h3 class="text-2xl font-bold">Evening Elegance</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Featured Item 2 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 to-rose-100 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1595777707802-51066f45ff20?w=400&q=80" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                         alt="Premium Dress">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <p class="text-white text-sm font-semibold">Summer Collection</p>
+                    </div>
+                </div>
+                
+                <!-- Featured Item 3 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-100 to-cyan-100 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400&q=80" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                         alt="Accessories">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <p class="text-white text-sm font-semibold">Accessories</p>
+                    </div>
+                </div>
+                
+                <!-- Featured Item 4 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-100 to-orange-100 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1598034182221-8b0760dc93c8?w=400&q=80" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                         alt="Luxury Bags">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <p class="text-white text-sm font-semibold">Premium Bags</p>
+                    </div>
+                </div>
+                
+                <!-- SHOP THE LOOK: AI Recommendations -->
+                <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-8 flex flex-col justify-between group cursor-pointer">
+                    <div>
+                        <p class="text-indigo-400 text-sm font-semibold tracking-widest uppercase mb-3">AI Powered</p>
+                        <h3 class="text-2xl md:text-3xl font-black text-white mb-2">Complete the Look</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">Our AI stylist suggests perfect pieces to match your selection.</p>
+                    </div>
+                    
+                    <!-- Mini Product Cards in Layout -->
+                    <div class="grid grid-cols-3 gap-2 mt-6">
+                        <div class="rounded-xl overflow-hidden h-24 bg-white/10 group-hover:scale-105 transition-transform">
+                            <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=150&q=80" class="w-full h-full object-cover" alt="Item 1">
+                        </div>
+                        <div class="rounded-xl overflow-hidden h-24 bg-white/10 group-hover:scale-105 transition-transform" style="animation-delay: 0.1s;">
+                            <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=150&q=80" class="w-full h-full object-cover" alt="Item 2">
+                        </div>
+                        <div class="rounded-xl overflow-hidden h-24 bg-white/10 group-hover:scale-105 transition-transform" style="animation-delay: 0.2s;">
+                            <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=150&q=80" class="w-full h-full object-cover" alt="Item 3">
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="mt-6 inline-flex items-center gap-2 text-white font-semibold group-hover:gap-3 transition-all">
+                        Explore Recommendations
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    <!-- COLLECTION SHOWCASE -->
+    <section class="py-20 px-6 md:px-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Collection Card 1 -->
+                <div class="group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
+                    <div class="relative h-80 overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100">
+                        <img src="https://images.unsplash.com/photo-1515992319-08dab5fa9e16?w=500&q=80" 
+                             class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500"
+                             alt="Summer Collection">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Summer 2024</h3>
+                        <p class="text-gray-600 mb-4">Light fabrics, bright colors, and fresh designs for your summer wardrobe.</p>
+                        <a href="#" class="inline-flex items-center text-indigo-600 font-semibold group-hover:gap-2 gap-1 transition-all">
+                            Shop Collection
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Collection Card 2 -->
+                <div class="group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
+                    <div class="relative h-80 overflow-hidden bg-gradient-to-br from-rose-100 to-pink-100">
+                        <img src="https://images.unsplash.com/photo-1515120285881-fcf3d5baa05d?w=500&q=80" 
+                             class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500"
+                             alt="Minimalist Collection">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Minimalist</h3>
+                        <p class="text-gray-600 mb-4">Timeless pieces in neutral tones. Perfect staples for any wardrobe.</p>
+                        <a href="#" class="inline-flex items-center text-indigo-600 font-semibold group-hover:gap-2 gap-1 transition-all">
+                            Shop Collection
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Collection Card 3 -->
+                <div class="group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
+                    <div class="relative h-80 overflow-hidden bg-gradient-to-br from-amber-100 to-yellow-100">
+                        <img src="https://images.unsplash.com/photo-1598034182221-8b0760dc93c8?w=500&q=80" 
+                             class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500"
+                             alt="Accessories">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Accessories</h3>
+                        <p class="text-gray-600 mb-4">Curated selection of premium jewelry, bags, and accessories.</p>
+                        <a href="#" class="inline-flex items-center text-indigo-600 font-semibold group-hover:gap-2 gap-1 transition-all">
+                            Shop Collection
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<style>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+    opacity: 0;
+}
+</style>
+{% endblock %}

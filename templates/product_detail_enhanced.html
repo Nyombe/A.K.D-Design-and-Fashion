@@ -1,0 +1,377 @@
+<!-- 
+A.K.D Fashion - Enhanced Product Detail Page
+Variant selection, AI recommendations, "Complete the Look"
+Mobile-optimized with micro-interactions
+-->
+
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | A.K.D Fashion Store{% endblock %}
+{% block meta_description %}{{ product.meta_description|default:product.description|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 lg:py-12 px-6">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex mb-12 text-sm" aria-label="Breadcrumb">
+        <a href="/" class="text-gray-600 hover:text-indigo-600 transition">Home</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'products:product_list' %}" class="text-gray-600 hover:text-indigo-600 transition">Products</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-900 font-semibold">{{ product.name }}</span>
+    </nav>
+    
+    <!-- Main Product Section: 2-Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        
+        <!-- LEFT: Image Gallery with Micro-interactions -->
+        <div class="space-y-4">
+            <!-- Main Image with Zoom on Hover -->
+            <div class="relative rounded-3xl overflow-hidden bg-gray-100 aspect-square group">
+                <img id="mainImage" 
+                     src="{% with image=product.images.first %}{{ image.image.url }}{% endwith %}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                     alt="{{ product.name }}">
+                
+                <!-- Zoom Icon on Hover (Mobile: Tap to expand) -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/10 backdrop-blur-sm">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Thumbnail Grid -->
+            {% if product.images.all|length > 1 %}
+            <div class="grid grid-cols-4 gap-3">
+                {% for image in product.images.all %}
+                <button onclick="changeImage(this)"
+                        class="rounded-lg overflow-hidden border-2 transition-all duration-200 {% if forloop.first %}border-indigo-600{% else %}border-transparent hover:border-gray-300{% endif %}"
+                        title="View image {{ forloop.counter }}">
+                    <img src="{% if image.image %}{{ image.image.url }}{% else %}{{ image.image_url }}{% endif %}"
+                         class="w-full h-20 object-cover"
+                         alt="Product image {{ forloop.counter }}">
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Stock Status Badge -->
+            <div class="flex items-center gap-2 pt-2">
+                {% if product.is_in_stock %}
+                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        In Stock
+                    </span>
+                {% else %}
+                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-full">
+                        Out of Stock
+                    </span>
+                {% endif %}
+                
+                {% if product.is_low_stock %}
+                    <span class="text-sm text-amber-600 font-medium">Only {{ product.stock }} left!</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        
+        <!-- RIGHT: Product Details with Variant Selector -->
+        <div class="space-y-6">
+            
+            <!-- Product Info Header -->
+            <div>
+                <span class="text-sm font-semibold tracking-widest text-indigo-600 uppercase">{{ product.category }}</span>
+                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 mt-2 tracking-tight">{{ product.name }}</h1>
+                
+                <!-- Rating & Reviews -->
+                <div class="flex items-center gap-4 mt-4">
+                    {% if product.rating > 0 %}
+                    <div class="flex items-center gap-2">
+                        <div class="flex gap-1">
+                            {% for i in "12345" %}
+                                {% if i|add:"0" <= product.rating %}
+                                    <svg class="w-4 h-4 text-indigo-600 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path></svg>
+                                {% else %}
+                                    <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path></svg>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="text-sm text-gray-600">({{ product.num_ratings }} reviews)</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Pricing Section -->
+            <div class="space-y-2">
+                <div class="flex items-baseline gap-4">
+                    {% if product.discount_price %}
+                        <span class="text-4xl font-black text-red-600">{{ product.discount_price }}</span>
+                        <span class="text-xl text-gray-400 line-through">{{ product.price }}</span>
+                        <span class="px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full">
+                            -{{ product.get_discount_percentage }}%
+                        </span>
+                    {% else %}
+                        <span class="text-4xl font-black text-gray-900">{{ product.price }}</span>
+                    {% endif %}
+                </div>
+                <p class="text-gray-600 text-sm">Price includes tax</p>
+            </div>
+            
+            <!-- Description -->
+            <p class="text-lg text-gray-700 leading-relaxed">{{ product.description }}</p>
+            
+            
+            <!-- VARIANT SELECTOR (Responsive) -->
+            {% if product.has_variants %}
+            <div id="variantSelector" class="space-y-6 p-6 bg-gradient-to-br from-gray-50 to-indigo-50 rounded-2xl border-2 border-dashed border-indigo-200">
+                <h3 class="text-lg font-bold text-gray-900">Select Your Options</h3>
+                
+                {% with variants_summary=product.get_variants_summary %}
+                {% for attr_name, values in variants_summary.items %}
+                    <div class="space-y-3">
+                        <label class="block text-sm font-semibold text-gray-900 capitalize">{{ attr_name }}</label>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="variant_{{ attr_name }}">
+                            {% for value in values %}
+                                <button type="button"
+                                        class="variant-option px-4 py-2 rounded-lg border-2 border-gray-300 font-medium text-sm transition-all duration-200 hover:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        data-attribute="{{ attr_name }}"
+                                        data-value="{{ value }}">
+                                    {{ value }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+                {% endwith %}
+                
+                <!-- Selected Variant Display -->
+                <div id="selectedVariantDisplay" class="hidden p-3 bg-white rounded-lg border border-indigo-200">
+                    <p class="text-sm text-gray-600">Selected: <span id="variantDisplay" class="font-semibold text-indigo-600"></span></p>
+                </div>
+            </div>
+            {% endif %}
+            
+            
+            <!-- QUANTITY SELECTOR & ADD TO CART -->
+            <div class="space-y-4 pt-6">
+                <div class="flex items-center gap-4">
+                    <label class="text-sm font-semibold text-gray-900">Quantity</label>
+                    <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
+                        <button onclick="decrementQty()" class="px-4 py-2 hover:bg-gray-100 transition">−</button>
+                        <input type="number" id="quantityInput" min="1" max="{{ product.stock }}" value="1" 
+                               class="w-16 text-center font-semibold border-0 focus:outline-none">
+                        <button onclick="incrementQty()" class="px-4 py-2 hover:bg-gray-100 transition">+</button>
+                    </div>
+                </div>
+                
+                <!-- Primary CTA: Add to Cart -->
+                <button id="addToCartBtn" onclick="addToCart()" 
+                        class="w-full py-4 bg-indigo-600 text-white font-bold text-lg rounded-full hover:bg-indigo-700 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <span class="flex items-center justify-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Add to Cart
+                    </span>
+                </button>
+                
+                <!-- Secondary CTA: Guest Checkout -->
+                <button onclick="quickCheckout()" 
+                        class="w-full py-3 border-2 border-indigo-600 text-indigo-600 font-semibold rounded-full hover:bg-indigo-50 transition-colors">
+                    Quick Checkout
+                </button>
+            </div>
+            
+            
+            <!-- FASHION DETAILS: Care, Material, etc. -->
+            {% if product.care_instructions or product.material_composition or product.fit_guide %}
+            <div class="pt-6 space-y-4 border-t-2 border-gray-200">
+                <h3 class="font-bold text-lg text-gray-900">Product Details</h3>
+                
+                {% if product.material_composition %}
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Material Composition</h4>
+                    <div class="flex flex-wrap gap-2">
+                        {% for material, percentage in product.material_composition.items %}
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">{{ material }} {{ percentage }}%</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if product.fit_guide %}
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Fit Guide</h4>
+                    <p class="text-sm text-gray-600">{{ product.fit_guide }}</p>
+                </div>
+                {% endif %}
+                
+                {% if product.care_instructions %}
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Care Instructions</h4>
+                    <p class="text-sm text-gray-600">{{ product.care_instructions }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    
+    <!-- AI RECOMMENDATIONS: "Complete the Look" -->
+    {% if ai_recommendations %}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-3xl font-black text-gray-900">Complete the Look</h2>
+                <p class="text-gray-600 mt-2">AI-selected items that pair perfectly with this piece</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for rec_product in ai_recommendations %}
+            <div class="group rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                <div class="relative h-64 overflow-hidden bg-gray-100">
+                    {% with img=rec_product.images.first %}
+                        <img src="{% if img.image %}{{ img.image.url }}{% endif %}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                             alt="{{ rec_product.name }}">
+                    {% endwith %}
+                    
+                    <!-- Hover: Quick Add Button -->
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <button class="px-4 py-2 bg-white text-gray-900 font-bold rounded-full hover:bg-indigo-600 hover:text-white transition-all">
+                            Quick Add
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-900 line-clamp-2">{{ rec_product.name }}</h3>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="text-lg font-bold text-indigo-600">${{ rec_product.get_display_price }}</span>
+                        {% if rec_product.discount_price %}
+                            <span class="text-sm text-gray-400 line-through">${{ rec_product.price }}</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ rec_product.get_absolute_url }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-3 inline-block">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+
+<script>
+function changeImage(button) {
+    document.querySelectorAll('[onclick="changeImage(this)"]').forEach(b => {
+        b.classList.remove('border-indigo-600');
+        b.classList.add('border-transparent');
+    });
+    button.classList.add('border-indigo-600');
+    button.classList.remove('border-transparent');
+    document.getElementById('mainImage').src = button.querySelector('img').src;
+}
+
+function incrementQty() {
+    const input = document.getElementById('quantityInput');
+    input.value = Math.min(parseInt(input.value) + 1, parseInt(input.max));
+}
+
+function decrementQty() {
+    const input = document.getElementById('quantityInput');
+    input.value = Math.max(1, parseInt(input.value) - 1);
+}
+
+function getSelectedVariants() {
+    const variants = {};
+    document.querySelectorAll('.variant-option.selected').forEach(btn => {
+        variants[btn.dataset.attribute] = btn.dataset.value;
+    });
+    return variants;
+}
+
+function addToCart() {
+    const productId = {{ product.id }};
+    const quantity = parseInt(document.getElementById('quantityInput').value);
+    const variantSelections = getSelectedVariants();
+    
+    const cartItem = {
+        productId: productId,
+        productName: '{{ product.name }}',
+        productImage: document.getElementById('mainImage').src,
+        price: '{{ product.get_display_price }}',
+        quantity: quantity,
+        variant Selections: variantSelections,
+        variantInfo: Object.values(variantSelections).join(', ') || null,
+        stock: {{ product.stock }}
+    };
+    
+    let cart = JSON.parse(localStorage.getItem('cart') || '{"items": []}');
+    
+    // Check if item already in cart (with same variants)
+    const existingIndex = cart.items.findIndex(item => 
+        item.productId === productId && 
+        JSON.stringify(item.variantSelections) === JSON.stringify(variantSelections)
+    );
+    
+    if (existingIndex >= 0) {
+        cart.items[existingIndex].quantity += quantity;
+    } else {
+        cart.items.push(cartItem);
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Show success toast
+    showToast('✓ Added to cart!', 'success');
+    openCartDrawer();
+}
+
+function quickCheckout() {
+    addToCart();
+    setTimeout(() => {
+        window.location.href = '/checkout/guest/';
+    }, 1000);
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg font-semibold text-white ${type === 'success' ? 'bg-green-600' : 'bg-indigo-600'} shadow-lg z-50 animate-fade-in`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// Variant selector interaction
+document.querySelectorAll('.variant-option').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const group = this.closest('[id^="variant_"]');
+        group.querySelectorAll('.variant-option').forEach(b => {
+            b.classList.remove('border-indigo-600', 'bg-indigo-50');
+            b.classList.add('border-gray-300');
+        });
+        this.classList.add('border-indigo-600', 'bg-indigo-50');
+        this.classList.remove('border-gray-300');
+        
+        const variants = getSelectedVariants();
+        const display = document.getElementById('selectedVariantDisplay');
+        const displayText = Object.entries(variants)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(' • ');
+        document.getElementById('variantDisplay').textContent = displayText;
+        display.classList.remove('hidden');
+    });
+});
+</script>
+{% endblock %}
