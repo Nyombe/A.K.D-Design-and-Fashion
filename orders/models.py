@@ -51,19 +51,6 @@ class CartItem(BaseModel):
     
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cart_items')
-    variant = models.ForeignKey(
-        'products.ProductVariantValue',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='cart_items',
-        help_text="If product has variants, this links to the selected variant"
-    )
-    variant_selections = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text="JSON: {'size': 'Medium', 'color': 'Blue', 'material': 'Cotton'}"
-    )
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Snapshot of price at time of adding
 
@@ -76,8 +63,7 @@ class CartItem(BaseModel):
         ]
 
     def __str__(self):
-        variant_info = f" ({', '.join([f'{k}={v}' for k, v in self.variant_selections.items()])})" if self.variant_selections else ""
-        return f"{self.product.name} x {self.quantity}{variant_info}"
+        return f"{self.product.name} x {self.quantity}"
 
     def get_total_price(self):
         """Get total price for this item."""
@@ -94,22 +80,14 @@ class CartItem(BaseModel):
         """Validate cart item."""
         super().clean()
         
-        # Check variant stock if variant exists
-        if self.variant:
-            if self.quantity > self.variant.stock:
-                raise ValidationError(f'Only {self.variant.stock} items available for this variant.')
-        else:
-            # Check product stock if no variant
-            if self.quantity > self.product.stock:
-                raise ValidationError(f'Only {self.product.stock} items available.')
+        # Check product stock
+        if self.quantity > self.product.stock:
+            raise ValidationError(f'Only {self.product.stock} items available.')
 
     def save(self, *args, **kwargs):
         """Save and update cart item."""
         if not self.price:
-            if self.variant:
-                self.price = self.variant.get_price()
-            else:
-                self.price = self.product.get_display_price()
+            self.price = self.product.get_display_price()
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -211,19 +189,6 @@ class OrderItem(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='order_items')
     vendor = models.ForeignKey('users.Vendor', on_delete=models.SET_NULL, null=True, blank=True, related_name='order_items')
-    variant = models.ForeignKey(
-        'products.ProductVariantValue',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='order_items',
-        help_text="If product has variants, this links to the ordered variant"
-    )
-    variant_selections = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text="JSON: {'size': 'Medium', 'color': 'Blue', 'material': 'Cotton'}"
-    )
     fulfillment_status = models.CharField(
         max_length=20, 
         choices=[
@@ -244,8 +209,7 @@ class OrderItem(BaseModel):
         ordering = ['created_at']
 
     def __str__(self):
-        variant_info = f" ({', '.join([f'{k}={v}' for k, v in self.variant_selections.items()])})" if self.variant_selections else ""
-        return f"{self.product.name if self.product else 'Deleted Product'} x {self.quantity}{variant_info}"
+        return f"{self.product.name if self.product else 'Deleted Product'} x {self.quantity}"
 
     def get_total_price(self):
         """Get total price for this order item."""
