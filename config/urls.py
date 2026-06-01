@@ -8,6 +8,12 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 from products.sitemaps import ProductSitemap, CategorySitemap, StaticViewSitemap
+from rest_framework.routers import DefaultRouter
+from orders.views_v2 import CartViewSet, GuestCheckoutView
+
+# REST API Router
+router = DefaultRouter()
+router.register(r'carts', CartViewSet, basename='cart')
 
 # OTP Admin is handled by middleware, not by class reassignment
 # This avoids breaking Jazzmin and other admin customizations
@@ -26,6 +32,8 @@ urlpatterns = [
     path('api/products/', include('products.urls.api')),
     path('api/orders/', include('orders.urls.api')),
     path('api/payments/', include('payments.urls')),
+    path('api/v2/', include(router.urls)),
+    path('api/v2/checkout/guest/', GuestCheckoutView.as_view(), name='guest-checkout'),
     path('auth/', include('users.urls.web')),
     path('products/', include('products.urls.web')),
     path('cart/', include('orders.urls.cart')),
