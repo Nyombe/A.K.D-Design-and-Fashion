@@ -7,7 +7,7 @@ from django.contrib import admin
 admin.site.site_header = "A.K.D FASHION AND DESIGN Management"
 admin.site.site_title = "A.K.D Management"
 admin.site.index_title = "Welcome to the A.K.D Admin Portal"
-admin.site.index_template = 'admin/jazzmin/dashboard.html'
+# Let jazzmin handle the dashboard template
 
 
 
