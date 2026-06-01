@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin %}
+
+{% block title %}{{ form_title }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+    <h1 style="margin-bottom: 1.5rem; font-size: 2rem; color: var(--text-primary);">
+      {{ form_title }}
+    </h1>
+
+    {% if form.non_field_errors %}
+      <div class="errorlist" style="margin-bottom: 2rem;">
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" id="change-form" style="margin-bottom: 2rem;">
+      {% csrf_token %}
+
+      {% for fieldset in adminform %}
+        <fieldset class="module">
+          <h2 style="margin: 0 0 1rem 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border); color: var(--text-primary);">
+            {% if fieldset.name %}
+              {{ fieldset.name }}
+            {% endif %}
+          </h2>
+
+          {% if fieldset.description %}
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              {{ fieldset.description }}
+            </p>
+          {% endif %}
+
+          {% for line in fieldset %}
+            <div class="fieldBox" style="margin-bottom: 1.5rem;">
+              {% for field in line %}
+                {% include "admin/field.html" %}
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      {% endfor %}
+
+      {% block submit_buttons %}
+        <div class="submit-row">
+          <input type="submit" value="Save" class="default button">
+          {% if object_id %}
+            <a href="{% url opts|admin_urlname:'change' object_id %}" class="button" style="background: rgba(99, 102, 241, 0.1); color: var(--text-secondary); box-shadow: none;">Cancel</a>
+          {% else %}
+            <a href="{% url opts|admin_urlname:'changelist' %}" class="button" style="background: rgba(99, 102, 241, 0.1); color: var(--text-secondary); box-shadow: none;">Back</a>
+          {% endif %}
+        </div>
+      {% endblock %}
+    </form>
+
+    {% if object_id and perms_opts.delete %}
+      <div class="deletelink-box">
+        <h3 style="margin: 0 0 1rem 0; color: #fca5a5;">Danger Zone</h3>
+        <a href="{% url opts|admin_urlname:'delete' object_id %}" class="deletelink button">
+          Delete {{ opts.verbose_name }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

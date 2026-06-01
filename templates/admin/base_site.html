@@ -1,0 +1,339 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ block.super }} | A.K.D Management{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --bg-dark: #0f172a;
+      --bg-darker: #1e293b;
+      --border: #334155;
+      --radius-md: 0.5rem;
+      --radius-lg: 1rem;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+
+    #container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    #header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    #header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    #header a:link, #header a:visited {
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    #header a:hover {
+      color: #c4b5fd;
+    }
+
+    #content {
+      flex: 1;
+      background: transparent;
+      padding: 2rem;
+    }
+
+    #content-main {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .module {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .module h2 {
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      margin: 0 0 1.5rem 0;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .module h3 {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin: 1.5rem 0 1rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .module ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .module li {
+      margin-bottom: 0.75rem;
+    }
+
+    .module a {
+      color: var(--primary-light);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .module a:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: #c4b5fd;
+    }
+
+    .breadcrumbs {
+      background: transparent;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0 1.5rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumbs a {
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .breadcrumbs a:hover {
+      color: #c4b5fd;
+    }
+
+    .submit-row {
+      background: transparent;
+      padding: 2rem 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .button, input[type="submit"], input[type="button"], input[type="reset"] {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      margin: 0 0.5rem;
+    }
+
+    .button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    }
+
+    .button.default {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    }
+
+    .deletelink {
+      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .deletelink:hover {
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    }
+
+    .deletelink-box {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .deletelink-box a {
+      color: #fca5a5;
+      font-weight: 600;
+    }
+
+    input[type="text"], input[type="password"], input[type="email"], input[type="url"], 
+    input[type="number"], textarea, select {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      transition: all 0.2s ease;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus,
+    input[type="url"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: var(--primary-light);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    label {
+      color: var(--text-secondary);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .fieldBox {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .help-text {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+
+    .errorlist {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      list-style: none;
+    }
+
+    .errorlist li {
+      margin-bottom: 0.5rem;
+    }
+
+    .error input, .error textarea, .error select {
+      border-color: #ef4444 !important;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    thead th {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 2px solid var(--primary);
+      color: var(--text-primary);
+      font-weight: 700;
+      padding: 1.25rem;
+      text-align: left;
+    }
+
+    tbody td {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    tbody tr {
+      transition: all 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    tbody tr:hover td {
+      color: var(--text-primary);
+    }
+
+    .pagination {
+      background: transparent;
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .pagination a {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid var(--border);
+      color: var(--primary-light);
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .pagination a:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--primary-light);
+    }
+
+    .pagination .this-page {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      border-radius: var(--radius-md);
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      #content {
+        padding: 1rem;
+      }
+
+      .module {
+        padding: 1rem;
+      }
+
+      .submit-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .button, input[type="submit"], input[type="button"] {
+        margin: 0;
+      }
+    }
+  </style>
+{% endblock %}
