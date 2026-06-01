@@ -1,0 +1,459 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Dashboard - A.K.D Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --accent-gold: #fbbf24;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --bg-dark: #0f172a;
+      --bg-darker: #0a0e27;
+      --border: #334155;
+      --radius-md: 0.75rem;
+      --radius-lg: 1.25rem;
+    }
+
+    #content {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(10, 14, 39, 0.3) 100%);
+      padding: 2.5rem;
+    }
+
+    .dashboard-header {
+      margin-bottom: 3rem;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dashboard-header h1 {
+      color: var(--text-primary);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .dashboard-header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      animation: cardSlideIn 0.5s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes cardSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-card.products .stat-icon {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+
+    .stat-card.orders .stat-icon {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--accent-emerald);
+    }
+
+    .stat-card.users .stat-icon {
+      background: rgba(251, 191, 36, 0.2);
+      color: var(--accent-gold);
+    }
+
+    .stat-card.revenue .stat-icon {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--accent-rose);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      color: var(--text-primary);
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .stat-change {
+      color: var(--accent-emerald);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .stat-change.negative {
+      color: var(--accent-rose);
+    }
+
+    .modules-section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent-gold) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .module-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      animation: cardSlideIn 0.5s ease-out;
+    }
+
+    .module-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+    }
+
+    .module-header {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(251, 191, 36, 0.1) 100%);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .module-title {
+      color: var(--text-primary);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .module-body {
+      padding: 1.5rem;
+    }
+
+    .module-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .module-list li {
+      margin-bottom: 0.75rem;
+    }
+
+    .module-list a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .module-list a:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent-gold);
+      transform: translateX(5px);
+    }
+
+    .module-list a::before {
+      content: '→';
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .module-list a:hover::before {
+      opacity: 1;
+    }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .quick-link-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+    }
+
+    .quick-link-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    }
+
+    .quick-link-btn.secondary {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary-light);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .quick-link-btn.secondary:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--primary-light);
+    }
+
+    .quick-link-btn.success {
+      background: linear-gradient(135deg, var(--accent-emerald) 0%, #06b6d4 100%);
+    }
+
+    .quick-link-btn.success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      #content {
+        padding: 1.5rem;
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .module-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <h1>👋 Welcome Back!</h1>
+  <p>Manage your luxury fashion empire from one powerful dashboard</p>
+</div>
+
+<!-- Quick Stats -->
+<div class="dashboard-grid">
+  <div class="stat-card products">
+    <div class="stat-icon">📦</div>
+    <div class="stat-label">Total Products</div>
+    <div class="stat-value">{{ app_list|length }}</div>
+    <div class="stat-change">↑ Active</div>
+  </div>
+
+  <div class="stat-card orders">
+    <div class="stat-icon">🛒</div>
+    <div class="stat-label">Recent Orders</div>
+    <div class="stat-value">0</div>
+    <div class="stat-change">Pending</div>
+  </div>
+
+  <div class="stat-card users">
+    <div class="stat-icon">👥</div>
+    <div class="stat-label">Users</div>
+    <div class="stat-value">0</div>
+    <div class="stat-change">Active</div>
+  </div>
+
+  <div class="stat-card revenue">
+    <div class="stat-icon">💰</div>
+    <div class="stat-label">Revenue</div>
+    <div class="stat-value">$0</div>
+    <div class="stat-change">This Month</div>
+  </div>
+</div>
+
+<!-- Core Modules -->
+<div class="modules-section">
+  <div class="section-title">
+    <div class="section-icon">⚙️</div>
+    Core Management
+  </div>
+
+  <div class="module-grid">
+    {% for app in app_list %}
+      <div class="module-card">
+        <div class="module-header">
+          <h2 class="module-title">{{ app.name }}</h2>
+        </div>
+        <div class="module-body">
+          <ul class="module-list">
+            {% for model in app.models %}
+              <li>
+                <a href="{{ model.admin_url }}">{{ model.name }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="modules-section">
+  <div class="section-title">
+    <div class="section-icon">⚡</div>
+    Quick Actions
+  </div>
+
+  <div class="quick-links">
+    {% if perms.products.add_product %}
+      <a href="/admin/products/product/add/" class="quick-link-btn success">
+        ➕ Add New Product
+      </a>
+    {% endif %}
+
+    {% if perms.orders.add_order %}
+      <a href="/admin/orders/order/add/" class="quick-link-btn">
+        🛍️ Create Order
+      </a>
+    {% endif %}
+
+    {% if perms.users.add_customuser %}
+      <a href="/admin/users/customuser/add/" class="quick-link-btn secondary">
+        👤 Add Customer
+      </a>
+    {% endif %}
+
+    {% if perms.products.add_category %}
+      <a href="/admin/products/category/add/" class="quick-link-btn secondary">
+        📂 New Category
+      </a>
+    {% endif %}
+
+    <a href="/admin/password_change/" class="quick-link-btn secondary">
+      🔐 Change Password
+    </a>
+
+    <a href="/" target="_blank" class="quick-link-btn secondary">
+      👁️ View Store
+    </a>
+  </div>
+</div>
+
+{% endblock %}

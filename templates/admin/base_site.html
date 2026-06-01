@@ -10,6 +10,7 @@
       --primary: #6366f1;
       --primary-light: #818cf8;
       --primary-dark: #4f46e5;
+      --accent-gold: #fbbf24;
       --text-primary: #f1f5f9;
       --text-secondary: #cbd5e1;
       --bg-dark: #0f172a;
@@ -37,25 +38,53 @@
 
     #header {
       background: rgba(15, 23, 42, 0.95);
-      border-bottom: 1px solid var(--border);
-      padding: 1.5rem 2rem;
-      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+      padding: 1.25rem 2rem;
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
     }
 
     #header h1 {
       margin: 0;
       font-size: 1.5rem;
+      font-weight: 700;
       color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      letter-spacing: -0.5px;
+    }
+
+    #header h1::before {
+      content: '✨';
+      font-size: 1.75rem;
+    }
+
+    #header-content {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-left: auto;
     }
 
     #header a:link, #header a:visited {
       color: var(--primary-light);
       text-decoration: none;
-      transition: color 0.2s ease;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 0.95rem;
     }
 
     #header a:hover {
-      color: #c4b5fd;
+      color: var(--accent-gold);
+      background: rgba(99, 102, 241, 0.1);
+      transform: translateX(2px);
     }
 
     #content {
