@@ -208,7 +208,16 @@
       <h2>Filters</h2>
       <div class="filterspecs">
         {% for spec in cl.filter_specs %}
-          {% admin_list_filter cl spec %}
+          <div class="filterspec">
+            <h3>{{ spec.title }}</h3>
+            <ul>
+              {% for choice in spec.choices %}
+                <li{% if choice.selected %} class="selected"{% endif %}>
+                  <a href="{{ choice.query_string }}">{{ choice.display }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         {% endfor %}
       </div>
     </div>
