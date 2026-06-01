@@ -1,0 +1,444 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin %}
+
+{% block title %}Dashboard | {{ block.super }}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin-modern.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <style>
+    .dashboard-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .dashboard-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      align-items: flex-end;
+    }
+
+    .welcome-section h1 {
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .welcome-section p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      line-height: 1.75;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      box-shadow: 0 18px 60px rgba(15, 23, 42, 0.18);
+      backdrop-filter: blur(16px);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 35%);
+      pointer-events: none;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(99, 102, 241, 0.35);
+      box-shadow: 0 24px 72px rgba(15, 23, 42, 0.28);
+    }
+
+    .stat-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.2);
+    }
+
+    .stat-icon.users {
+      background: rgba(14, 165, 233, 0.18);
+      color: #0ea5e9;
+    }
+
+    .stat-icon.products {
+      background: rgba(16, 185, 129, 0.18);
+      color: #10b981;
+    }
+
+    .stat-icon.orders {
+      background: rgba(245, 158, 11, 0.18);
+      color: #f59e0b;
+    }
+
+    .stat-icon.payments {
+      background: rgba(239, 68, 68, 0.18);
+      color: #ef4444;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #a5b4fc;
+      margin-bottom: 0.55rem;
+    }
+
+    .stat-number {
+      font-size: clamp(2rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: #eef2ff;
+      margin-bottom: 1rem;
+    }
+
+    .stat-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #c7d2fe;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .stat-action:hover {
+      color: #f8fafc;
+      transform: translateX(4px);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .chart-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 18px 56px rgba(15, 23, 42, 0.18);
+      backdrop-filter: blur(14px);
+    }
+
+    .chart-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #eef2ff;
+      margin-bottom: 1.25rem;
+    }
+
+    .quick-actions {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 18px 60px rgba(15, 23, 42, 0.18);
+      backdrop-filter: blur(14px);
+    }
+
+    .quick-actions h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #eef2ff;
+      margin-bottom: 1rem;
+    }
+
+    .quick-actions-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px;
+      padding: 1.25rem;
+      border-radius: 1rem;
+      background: rgba(99, 102, 241, 0.09);
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      color: #e2e8f0;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .quick-action-btn:hover {
+      transform: translateY(-4px);
+      background: rgba(99, 102, 241, 0.16);
+      border-color: rgba(99, 102, 241, 0.35);
+      color: #f8fafc;
+    }
+
+    .quick-action-btn i {
+      display: block;
+      font-size: 1.55rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .table {
+      border-collapse: separate;
+      border-spacing: 0 0.75rem;
+      width: 100%;
+    }
+
+    .table thead th {
+      background: rgba(15, 23, 42, 0.94);
+      color: #cbd5e1;
+      border-bottom: none;
+      padding: 1rem 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.82rem;
+    }
+
+    .table tbody tr {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .table tbody td {
+      padding: 1rem 0.9rem;
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .badge-success { background: #22c55e; color: #f8fafc; }
+    .badge-danger { background: #ef4444; color: #f8fafc; }
+    .badge-info { background: #3b82f6; color: #f8fafc; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1>👋 Welcome back, Admin!</h1>
+      <p>Here's what's happening with your store today.</p>
+    </div>
+  </div>
+
+  <!-- Key Statistics Cards -->
+  <div class="stats-grid">
+    <!-- Users -->
+    <div class="stat-card">
+      <div class="stat-icon users">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-label">Total Users</div>
+      <div class="stat-number">{{ dashboard_counts.users.count }}</div>
+      <a href="{% url 'admin:users_customuser_changelist' %}" class="stat-action">
+        Manage users →
+      </a>
+    </div>
+
+    <!-- Products -->
+    <div class="stat-card">
+      <div class="stat-icon products">
+        <i class="fas fa-box-open"></i>
+      </div>
+      <div class="stat-label">Active Products</div>
+      <div class="stat-number">{{ dashboard_counts.products.count }}</div>
+      <a href="{% url 'admin:products_product_changelist' %}" class="stat-action">
+        View products →
+      </a>
+    </div>
+
+    <!-- Orders -->
+    <div class="stat-card">
+      <div class="stat-icon orders">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <div class="stat-label">Total Orders</div>
+      <div class="stat-number">{{ dashboard_counts.orders.count }}</div>
+      <a href="{% url 'admin:orders_order_changelist' %}" class="stat-action">
+        View orders →
+      </a>
+    </div>
+
+    <!-- Payments -->
+    <div class="stat-card">
+      <div class="stat-icon payments">
+        <i class="fas fa-credit-card"></i>
+      </div>
+      <div class="stat-label">Transactions</div>
+      <div class="stat-number">{{ dashboard_counts.payments.count }}</div>
+      <a href="{% url 'admin:payments_payment_changelist' %}" class="stat-action">
+        View payments →
+      </a>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">📊 Sales Overview</div>
+      <canvas id="salesChart" height="200"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">📈 User Growth</div>
+      <canvas id="usersChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h3>🚀 Quick Actions</h3>
+    <div class="quick-actions-list">
+      <a href="{% url 'admin:products_product_add' %}" class="quick-action-btn">
+        <i class="fas fa-plus"></i>
+        Add Product
+      </a>
+      <a href="{% url 'admin:users_customuser_add' %}" class="quick-action-btn">
+        <i class="fas fa-user-plus"></i>
+        Add User
+      </a>
+      <a href="{% url 'admin:orders_order_changelist' %}" class="quick-action-btn">
+        <i class="fas fa-list"></i>
+        View Orders
+      </a>
+      <a href="{% url 'analytics:dashboard' %}" class="quick-action-btn">
+        <i class="fas fa-chart-line"></i>
+        Analytics
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sales Chart
+  const salesCtx = document.getElementById('salesChart').getContext('2d');
+  new Chart(salesCtx, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'Sales',
+        data: [12000, 19000, 15000, 25000, 22000, 30000],
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#6366f1',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#cbd5e1' }
+        },
+        filler: true
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(148, 163, 184, 0.1)' },
+          ticks: { color: '#cbd5e1' }
+        },
+        x: {
+          grid: { color: 'rgba(148, 163, 184, 0.1)' },
+          ticks: { color: '#cbd5e1' }
+        }
+      }
+    }
+  });
+
+  // Users Chart
+  const usersCtx = document.getElementById('usersChart').getContext('2d');
+  new Chart(usersCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [{
+        label: 'New Users',
+        data: [45, 52, 48, 61],
+        backgroundColor: [
+          'rgba(16, 185, 129, 0.8)',
+          'rgba(6, 182, 212, 0.8)',
+          'rgba(99, 102, 241, 0.8)',
+          'rgba(245, 158, 11, 0.8)'
+        ],
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'x',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(148, 163, 184, 0.1)' },
+          ticks: { color: '#cbd5e1' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#cbd5e1' }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}
