@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_urls static %}
+{% load i18n admin_urls static admin %}
 
 {% block title %}{{ cl.opts.verbose_name_plural | capfirst }} | {{ block.super }}{% endblock %}
 
@@ -208,16 +208,7 @@
       <h2>Filters</h2>
       <div class="filterspecs">
         {% for spec in cl.filter_specs %}
-          <div class="filterspec">
-            <h3>{{ spec.title }}</h3>
-            <ul>
-              {% for choice in spec.choices %}
-                <li{% if choice.selected %} class="selected"{% endif %}>
-                  <a href="{{ choice.query_string }}">{{ choice.display }}</a>
-                </li>
-              {% endfor %}
-            </ul>
-          </div>
+          {% admin_list_filter cl spec %}
         {% endfor %}
       </div>
     </div>
@@ -236,6 +227,8 @@
       </p>
     {% endif %}
   </div>
+
+  {% pagination cl %}
 
   {% pagination cl %}
 </div>
