@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, UserPreferences
 from .forms import CustomUserCreationForm, CustomUserChangeForm
@@ -39,7 +40,8 @@ class UserPreferencesAdmin(admin.ModelAdmin):
     search_fields = ('user__email',)
 
     def email_notifications_badge(self, obj):
+        from django.utils.safestring import mark_safe
         if obj.email_notifications:
-            return format_html('<span style="color: green;">✓ Enabled</span>')
-        return format_html('<span style="color: gray;">✗ Disabled</span>')
+            return mark_safe('<span style="color: green;">✓ Enabled</span>')
+        return mark_safe('<span style="color: gray;">✗ Disabled</span>')
     email_notifications_badge.short_description = 'Email'
