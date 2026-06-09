@@ -3,6 +3,45 @@
 from django.db import migrations, models
 
 
+def column_exists(connection, table_name, column_name):
+    with connection.cursor() as cursor:
+        if connection.vendor == 'postgresql':
+            cursor.execute(
+                "SELECT EXISTS (SELECT 1 FROM information_schema.columns "
+                "WHERE table_name = %s AND column_name = %s)",
+                [table_name, column_name]
+            )
+            return cursor.fetchone()[0]
+        elif connection.vendor == 'sqlite':
+            cursor.execute(f"PRAGMA table_info({table_name})")
+            columns = [row[1] for row in cursor.fetchall()]
+            return column_name in columns
+        else:
+            try:
+                cursor.execute(f"SELECT {column_name} FROM {table_name} LIMIT 0")
+                return True
+            except Exception:
+                return False
+
+def add_fields_safely(apps, schema_editor):
+    Order = apps.get_model('orders', 'Order')
+    connection = schema_editor.connection
+    
+    # Define email field for Order
+    order_email = models.EmailField(blank=True, default='', max_length=254)
+    Order.add_to_class('email', order_email)
+    
+    # Define full_name field for Order
+    order_full_name = models.CharField(blank=True, default='', max_length=255)
+    Order.add_to_class('full_name', order_full_name)
+
+    if not column_exists(connection, 'orders_order', 'email'):
+        schema_editor.add_field(Order, order_email)
+        
+    if not column_exists(connection, 'orders_order', 'full_name'):
+        schema_editor.add_field(Order, order_full_name)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,14 +49,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='order',
-            name='email',
-            field=models.EmailField(blank=True, default='', max_length=254),
-        ),
-        migrations.AddField(
-            model_name='order',
-            name='full_name',
-            field=models.CharField(blank=True, default='', max_length=255),
-        ),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddField(
+                    model_name='order',
+                    name='email',
+                    field=models.EmailField(blank=True, default='', max_length=254),
+                ),
+                migrations.AddField(
+                    model_name='order',
+                    name='full_name',
+                    field=models.CharField(blank=True, default='', max_length=255),
+                ),
+            ],
+            database_operations=[
+                migrations.RunPython(add_fields_safely),
+            ]
+        )
     ]
