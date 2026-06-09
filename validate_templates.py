@@ -55,8 +55,8 @@ def validate_templates():
             # Check for unmatched opening tags
             for tag, closing_tag in tag_pairs.items():
                 if closing_tag:
-                    open_count = len(re.findall(rf'{{% {tag}\b', content))
-                    close_count = len(re.findall(rf'{{% {closing_tag}}}', content))
+                    open_count = len(re.findall(rf'{{%\s*{tag}\b', content))
+                    close_count = len(re.findall(rf'{{%\s*{closing_tag}\s*%}}', content))
                     
                     if open_count != close_count:
                         errors.append(

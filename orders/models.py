@@ -51,6 +51,8 @@ class CartItem(BaseModel):
     
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cart_items')
+    variant = models.ForeignKey('products.ProductVariantValue', on_delete=models.SET_NULL, null=True, blank=True, related_name='cart_items')
+    variant_selections = models.JSONField(default=dict, blank=True)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Snapshot of price at time of adding
 
@@ -114,6 +116,8 @@ class Order(BaseModel):
     
     # User info
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='orders')
+    email = models.EmailField(blank=True, default="")
+    full_name = models.CharField(max_length=255, blank=True, default="")
     
     # Order details
     order_number = models.CharField(max_length=50, unique=True)
@@ -202,6 +206,8 @@ class OrderItem(BaseModel):
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    variant = models.ForeignKey('products.ProductVariantValue', on_delete=models.SET_NULL, null=True, blank=True, related_name='order_items')
+    variant_selections = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = 'Order Item'
