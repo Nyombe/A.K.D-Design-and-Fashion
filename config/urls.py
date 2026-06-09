@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from products.sitemaps import ProductSitemap, CategorySitemap, StaticViewSitemap
 from rest_framework.routers import DefaultRouter
 from orders.views_v2 import CartViewSet, GuestCheckoutView
+from core.views import serve_media_with_fallback
 
 # REST API Router
 router = DefaultRouter()
@@ -43,11 +44,13 @@ urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
     
+    # Media Fallback Server
+    path('media/<path:path>', serve_media_with_fallback, {'document_root': settings.MEDIA_ROOT}),
+    
     path('', include('core.urls')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     if 'debug_toolbar' in settings.INSTALLED_APPS:
         import debug_toolbar
