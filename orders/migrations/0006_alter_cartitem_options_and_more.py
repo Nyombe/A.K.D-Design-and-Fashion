@@ -4,6 +4,72 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def column_exists(connection, table_name, column_name):
+    with connection.cursor() as cursor:
+        if connection.vendor == 'postgresql':
+            cursor.execute(
+                "SELECT EXISTS (SELECT 1 FROM information_schema.columns "
+                "WHERE table_name = %s AND column_name = %s)",
+                [table_name, column_name]
+            )
+            return cursor.fetchone()[0]
+        elif connection.vendor == 'sqlite':
+            cursor.execute(f"PRAGMA table_info({table_name})")
+            columns = [row[1] for row in cursor.fetchall()]
+            return column_name in columns
+        else:
+            try:
+                cursor.execute(f"SELECT {column_name} FROM {table_name} LIMIT 0")
+                return True
+            except Exception:
+                return False
+
+def add_fields_safely(apps, schema_editor):
+    CartItem = apps.get_model('orders', 'CartItem')
+    OrderItem = apps.get_model('orders', 'OrderItem')
+    ProductVariantValue = apps.get_model('products', 'ProductVariantValue')
+    connection = schema_editor.connection
+    
+    # Define variant field for CartItem
+    cart_variant = models.ForeignKey(
+        to=ProductVariantValue,
+        blank=True,
+        null=True,
+        on_delete=django.db.models.deletion.SET_NULL,
+        related_name='cart_items'
+    )
+    CartItem.add_to_class('variant', cart_variant)
+    
+    # Define variant_selections field for CartItem
+    cart_variant_selections = models.JSONField(blank=True, default=dict)
+    CartItem.add_to_class('variant_selections', cart_variant_selections)
+
+    # Define variant field for OrderItem
+    order_variant = models.ForeignKey(
+        to=ProductVariantValue,
+        blank=True,
+        null=True,
+        on_delete=django.db.models.deletion.SET_NULL,
+        related_name='order_items'
+    )
+    OrderItem.add_to_class('variant', order_variant)
+
+    # Define variant_selections field for OrderItem
+    order_variant_selections = models.JSONField(blank=True, default=dict)
+    OrderItem.add_to_class('variant_selections', order_variant_selections)
+
+    if not column_exists(connection, 'orders_cartitem', 'variant_id'):
+        schema_editor.add_field(CartItem, cart_variant)
+        
+    if not column_exists(connection, 'orders_cartitem', 'variant_selections'):
+        schema_editor.add_field(CartItem, cart_variant_selections)
+        
+    if not column_exists(connection, 'orders_orderitem', 'variant_id'):
+        schema_editor.add_field(OrderItem, order_variant)
+        
+    if not column_exists(connection, 'orders_orderitem', 'variant_selections'):
+        schema_editor.add_field(OrderItem, order_variant_selections)
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -12,32 +78,39 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='cartitem',
-            options={'ordering': ['-created_at'], 'verbose_name': 'Cart Item', 'verbose_name_plural': 'Cart Items'},
-        ),
-        migrations.AlterUniqueTogether(
-            name='cartitem',
-            unique_together=set(),
-        ),
-        migrations.AddField(
-            model_name='cartitem',
-            name='variant',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cart_items', to='products.productvariantvalue'),
-        ),
-        migrations.AddField(
-            model_name='cartitem',
-            name='variant_selections',
-            field=models.JSONField(blank=True, default=dict),
-        ),
-        migrations.AddField(
-            model_name='orderitem',
-            name='variant',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_items', to='products.productvariantvalue'),
-        ),
-        migrations.AddField(
-            model_name='orderitem',
-            name='variant_selections',
-            field=models.JSONField(blank=True, default=dict),
-        ),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AlterModelOptions(
+                    name='cartitem',
+                    options={'ordering': ['-created_at'], 'verbose_name': 'Cart Item', 'verbose_name_plural': 'Cart Items'},
+                ),
+                migrations.AlterUniqueTogether(
+                    name='cartitem',
+                    unique_together=set(),
+                ),
+                migrations.AddField(
+                    model_name='cartitem',
+                    name='variant',
+                    field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cart_items', to='products.productvariantvalue'),
+                ),
+                migrations.AddField(
+                    model_name='cartitem',
+                    name='variant_selections',
+                    field=models.JSONField(blank=True, default=dict),
+                ),
+                migrations.AddField(
+                    model_name='orderitem',
+                    name='variant',
+                    field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_items', to='products.productvariantvalue'),
+                ),
+                migrations.AddField(
+                    model_name='orderitem',
+                    name='variant_selections',
+                    field=models.JSONField(blank=True, default=dict),
+                ),
+            ],
+            database_operations=[
+                migrations.RunPython(add_fields_safely),
+            ]
+        )
     ]
